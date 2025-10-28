@@ -50,3 +50,57 @@ body {
     height: 100%;
     image-rendering: pixelated;
 }
+
+.pecas-capturadas {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.left {
+    margin-right: 148px;
+}
+
+.right {
+    margin-left: 148px;
+}
+
+.image {
+    background-color: #F4E8D8;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: solid 4px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    image-rendering: pixelated;
+}
+
+.retangulo {
+    border: solid 3px;
+    width: 70px;
+    height: 409px;
+}
+.red {
+    border-color: #BD3120;
+}
+
+.blue {
+    border-color: #206AD8;
+}
+
+.right .image {
+    background-image: url("./assets/hud/images/blueImage.png");
+}
+
+.left .image {
+    background-image: url("./assets/hud/images/redImage.png");
+}
+
+.right .retangulo {
+    border-radius: 18px 18px 0px 0px;
+}
+
+.left .retangulo {
+    border-radius: 0px 0px 18px 18px;
+}
