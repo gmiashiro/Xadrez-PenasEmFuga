@@ -99,3 +99,40 @@ function openConfigWindow() {
         camadaEscura.remove();
     }
 }
+
+
+function openEvolucaoPeaoWindow() {
+    // Cria a aba
+    const evolucaoWindow = document.createElement("div");
+    evolucaoWindow.id = "evolucao-window";
+    // Cria a camada escura que será colocada atrás da aba
+    const camadaEscura = document.createElement("div");
+    camadaEscura.classList.add("escurecer");
+    // Adiciona toda a estrutura de html da aba
+    evolucaoWindow.innerHTML += "<div class='evolucao-header'><span class='evolucao-title'>Promoção</span><p>Escolha sua peça</p></div><div class='evolucao-button-container'><button class='evolucao-button rainha'></button><button class='evolucao-button torre'></button><button class='evolucao-button cavalo'></button><button class='evolucao-button bispo'></button></div>";
+    // <div class='evolucao-header'>
+    //     <span class='evolucao-title'>Promoção</span>
+    //     <p>Escolha sua peça</p>
+    // </div>
+    // <div class='evolucao-button-container'>
+    //     <button class='evolucao-button rainha'></button>
+    //     <button class='evolucao-button torre'></button>
+    //     <button class='evolucao-button cavalo'></button>
+    //     <button class='evolucao-button bispo'></button>
+    // </div>
+
+    // Coloca os novos elementos no body
+    const body = document.getElementById("body");
+    body.appendChild(camadaEscura);
+    body.appendChild(evolucaoWindow);
+
+    const buttons = document.querySelectorAll(".evolucao-button");
+    buttons.forEach(button => {
+        button.onclick = () => { 
+            setTimeout(() => {
+                evolucaoWindow.remove();
+                camadaEscura.remove();
+            }, 300);
+        }
+    })
+}
