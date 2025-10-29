@@ -30,10 +30,12 @@ body, html {
 }
 
 body {
+    position: absolute;
     background-color: #d9d9d9;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 
 .game-container {
@@ -107,29 +109,3 @@ body {
     border-radius: 0px 0px 18px 18px;
 }
 
-.confi-button-container {
-    align-self: flex-start;
-    margin-top: 18px;
-    margin-left: 0px;
-    background-repeat: no-repeat;
-    margin-right: 0px;
-}
-
-.confi-button {
-    width: 49px;
-    height: 49px;
-    background-image: url("./assets/hud/images/icons/confi.png");
-    border: none;
-    background-color: transparent; 
-    transition: 0.15s;
-}
-
-.confi-button:hover {
-    scale: 1.1;
-    cursor: pointer;
-}
-
-.confi-button:active {
-    background-image: url("./assets/hud/images/icons/confiHover.png");
-    scale: 0.9;
-}
