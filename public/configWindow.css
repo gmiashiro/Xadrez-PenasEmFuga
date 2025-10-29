@@ -1,0 +1,125 @@
+.confi-button-container {
+    align-self: flex-start;
+    margin-top: 18px;
+    margin-left: 0px;
+    background-repeat: no-repeat;
+    margin-right: 0px;
+}
+
+.confi-button {
+    width: 49px;
+    height: 49px;
+    background-image: url("./assets/hud/images/icons/confi.png");
+    border: none;
+    background-color: transparent; 
+    transition: 0.15s;
+}
+
+.confi-button:hover {
+    scale: 1.1;
+    cursor: pointer;
+}
+
+.confi-button:active {
+    background-image: url("./assets/hud/images/icons/confiHover.png");
+    scale: 0.9;
+}
+
+.escurecer {
+    position: absolute;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+}
+
+#config-window {
+    position: absolute;
+    z-index: 3;
+    width: 415px;
+    height: 224px;
+    background-color: #F4E8D8;
+    border: solid 4px #499452;
+    border-radius: 30px;
+}
+
+.config-header {
+    font-family: "Acme", sans-serif;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.config-title {
+    color: #0F6819;
+    font-size: 40px;
+    margin-top: 10px;
+}
+
+.config-exit-button {
+    position: absolute;
+    margin-left: 368px;
+    margin-top: 9px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background-color: #499452;
+    font-family: "Acme", sans-serif;
+    color: #F4E8D8;
+    font-size: 20px;
+    transition: 0.15s;
+}
+
+.config-exit-button:hover {
+    scale: 1.2;
+    cursor: pointer;
+}
+
+.config-exit-button:active {
+    color: #0F6819;
+    scale: 0.9;
+}
+
+.config-window-button-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 55px;
+}
+
+.config-window-button {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    border: none;
+    transition: 0.15s;
+}
+
+.config-window-button:hover {
+    scale: 1.1;
+    cursor: pointer;
+}
+
+.config-window-button:active {
+    scale: 0.9;
+}
+
+.sound {
+    background-image: url("./assets/hud/images/icons/somOn.png");
+}
+
+.song {
+    background-image: url("./assets/hud/images/icons/musicaOn.png");
+}
+
+.soundOff {
+    background-image: url("./assets/hud/images/icons/somOff.png");
+}
+
+.songOff {
+    background-image: url("./assets/hud/images/icons/musicaOff.png");
+}

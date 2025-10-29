@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Penas no tabuleiro!</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./configWindow.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<body id="body">
     <!-- <h1>Chat WebSocket</h1>
     <div id="messages"></div>
     <input id="msgInput" placeholder="Digite sua mensagem..." />
@@ -27,7 +28,7 @@
         <div class="image blue"></div>
     </div>
     <div class="confi-button-container">
-        <button class="confi-button"></button>
+        <button class="confi-button" onclick="openConfigWindow()"></button>
     </div>
 
     <script src="script.js"></script>
