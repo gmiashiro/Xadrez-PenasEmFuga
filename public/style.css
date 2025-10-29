@@ -45,6 +45,7 @@ body {
     width: 513px;
     height: 513px;
     margin: 0;
+    image-rendering: pixelated;
 }
 
 .game-container canvas {
