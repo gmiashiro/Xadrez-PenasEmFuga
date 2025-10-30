@@ -1,4 +1,8 @@
+const { createContext } = require("react");
+
 const ws = new WebSocket("ws://localhost:51171");
+
+console.log("Script carregado");
 
 // const msgBox = document.getElementById("messages");
 // const input = document.getElementById("msgInput");
@@ -20,6 +24,60 @@ const ws = new WebSocket("ws://localhost:51171");
 //         input.value = "";
 //     }
 // });
+
+// Tamanho do tabuleiro e dos tiles
+const BOARD_SIZE = 512;
+const TILE_SIZE = BOARD_SIZE / 8;
+
+let selectedTile = null;
+
+// Carrega a imagem do tabuleiro
+const boardImage = new Image();
+boardImage.src = "./assets/hud/background/xadrezFundo.png"
+
+boardImage.onload = () => {
+    draw();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
+
+    if(selectedTile) {
+        const pixelX = selectedTile.x * TILE_SIZE;
+        const pixelY = selectedTile.y * TILE_SIZE;
+
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
+    }
+}
+
+canvas.addEventListener("click", (event) => {
+    //Pega a posição do clieque no canvas.
+    const clickX = event.offsetX;
+    const clickY = event.offsetY;
+
+    // Converte a posição do pixel para um índice de tile
+    const tileX = Math.floor(clickX / TILE_SIZE);
+    const tileY = Math.floor(clickY / TILE_SIZE);
+
+    // lógica de ligar e desligar o tile
+    if(selectedTile && selectedTile.x === tileX && selectedTile.y === tileY) {
+        selectedTitle = null;
+    } else {
+        selectedTile = { x: tileX, y: tileY };
+    }
+
+    //Para testes
+    console.log(`Clique detectado no tile (x, y): ${tileX}, ${tileY}`);
+    if (selectedTile) {
+        console.log("Tile selecionado.");
+    } else {
+        console.log("Tile desmarcado.");
+    }
+
+    draw();
+});
 
 // A música e o som começam ligadas
 var sound = true;

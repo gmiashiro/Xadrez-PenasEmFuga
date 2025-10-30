@@ -42,8 +42,8 @@ body {
     background-image: url("./assets/hud/background/xadrezFundo.png");
     background-repeat: no-repeat;
     background-size: auto;
-    width: 513px;
-    height: 513px;
+    width: 512px;
+    height: 512px;
     margin: 0;
     image-rendering: pixelated;
 }
