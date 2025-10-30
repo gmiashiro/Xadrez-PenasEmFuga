@@ -1,0 +1,74 @@
+#evolucao-window {
+    position: absolute;
+    z-index: 3;
+    width: 415px;
+    height: 224px;
+    background-color: #F4E8D8;
+    border: solid 4px #499452;
+    border-radius: 30px;
+}
+
+.evolucao-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    font-family: "Acme", sans-serif;
+}
+
+.evolucao-title {
+    margin: 0;
+    font-size: 37px;
+    color: #0F6819; 
+}
+
+.evolucao-header p {
+    margin: 0;
+    font-size: 18px;
+    font-style: italic;
+    color: #499452;
+}
+
+.evolucao-button-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 30px;
+}
+
+.evolucao-button {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #F4E8D8;
+    background-repeat: no-repeat;
+    border: solid 3px #0F6819;
+    transition: 0.15s;
+    background-size: cover;
+    image-rendering: pixelated;
+}
+
+.evolucao-button:hover {
+    scale: 1.1;
+    cursor: pointer;
+}
+
+.evolucao-button:active {
+    scale: 0.9;
+}
+
+.rainha {
+    background-image: url("./assets/hud/images/icons/queenRed.png");
+}
+
+.torre {
+    background-image: url("./assets/hud/images/icons/towerRed.png");
+}
+
+.cavalo {
+    background-image: url("./assets/hud/images/icons/horseRed.png");
+}
+
+.bispo {
+    background-image: url("./assets/hud/images/icons/bishopRed.png");
+}

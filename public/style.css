@@ -45,6 +45,7 @@ body {
     width: 513px;
     height: 513px;
     margin: 0;
+    image-rendering: pixelated;
 }
 
 .game-container canvas {
@@ -107,5 +108,18 @@ body {
 
 .left .retangulo {
     border-radius: 0px 0px 18px 18px;
+}
+
+.escurecer {
+    position: absolute;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+}
+
+.teste {
+    position: absolute;
+    z-index: 2;
 }
 
