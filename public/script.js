@@ -1,8 +1,14 @@
-const { createContext } = require("react");
+//const { createContext } = require("react");
+const canvas = document.querySelector(".game-canvas");
+const ctx = canvas.getContext("2d");
 
 const ws = new WebSocket("ws://localhost:51171");
-
-console.log("Script carregado");
+ws.onopen = () => {
+    console.log("Conectado ao servidor WebSocket");
+};
+ws.onmessage = (event) => {
+    console.log("Mensagem do servidor:", event.data);
+};
 
 // const msgBox = document.getElementById("messages");
 // const input = document.getElementById("msgInput");
@@ -25,58 +31,23 @@ console.log("Script carregado");
 //     }
 // });
 
-// Tamanho do tabuleiro e dos tiles
-const BOARD_SIZE = 512;
-const TILE_SIZE = BOARD_SIZE / 8;
+// 1. Cria uma instância do nosso gerenciador de tabuleiro
+const tiles = new Tiles(canvas, ctx);
 
-let selectedTile = null;
-
-// Carrega a imagem do tabuleiro
-const boardImage = new Image();
-boardImage.src = "./assets/hud/background/xadrezFundo.png"
-
-boardImage.onload = () => {
-    draw();
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(boardImage, 0, 0, canvas.width, canvas.height);
-
-    if(selectedTile) {
-        const pixelX = selectedTile.x * TILE_SIZE;
-        const pixelY = selectedTile.y * TILE_SIZE;
-
-        ctx.fillStyle = "rgba(0,0,0,0.3)";
-        ctx.fillRect(pixelX, pixelY, TILE_SIZE, TILE_SIZE);
-    }
-}
-
+// 2. Adiciona o listener de clique no canvas
 canvas.addEventListener("click", (event) => {
-    //Pega a posição do clieque no canvas.
+    // Pega a posição do clique relativa ao canvas
     const clickX = event.offsetX;
     const clickY = event.offsetY;
 
-    // Converte a posição do pixel para um índice de tile
-    const tileX = Math.floor(clickX / TILE_SIZE);
-    const tileY = Math.floor(clickY / TILE_SIZE);
+    // Converte a posição do pixel (ex: 130px) para o índice da grade (ex: 2)
+    // A própria classe Tiles sabe seu tamanho, então pedimos para ela converter
+    const tileCoords = tiles.getTileCoordsFromPixels(clickX, clickY);
 
-    // lógica de ligar e desligar o tile
-    if(selectedTile && selectedTile.x === tileX && selectedTile.y === tileY) {
-        selectedTitle = null;
-    } else {
-        selectedTile = { x: tileX, y: tileY };
+    if (tileCoords) {
+        // Delega o evento de clique para a classe Tiles
+        tiles.handleGridClick(tileCoords.x, tileCoords.y);
     }
-
-    //Para testes
-    console.log(`Clique detectado no tile (x, y): ${tileX}, ${tileY}`);
-    if (selectedTile) {
-        console.log("Tile selecionado.");
-    } else {
-        console.log("Tile desmarcado.");
-    }
-
-    draw();
 });
 
 // A música e o som começam ligadas
@@ -194,3 +165,5 @@ function openEvolucaoPeaoWindow() {
         }
     })
 }
+
+console.log("Script carregado");
