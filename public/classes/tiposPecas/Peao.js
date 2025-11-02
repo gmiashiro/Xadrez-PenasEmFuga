@@ -1,5 +1,5 @@
 class Peao extends Peca {
-    constructor() {
-        
+    constructor(config) {
+        super(config);
     }
 }

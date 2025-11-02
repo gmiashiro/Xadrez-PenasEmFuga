@@ -1,5 +1,5 @@
 class Cavalo extends Peca {
-    constructor() {
-        
+    constructor(config) {
+        super(config);
     }
 }

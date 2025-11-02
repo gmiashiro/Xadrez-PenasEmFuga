@@ -16,9 +16,31 @@ const server = http.createServer((req, res) => {
 
         // Tipo de conteúdo básico
         const ext = path.extname(filePath);
-        const contentType = ext === ".css" ? "text/css" :
-            ext === ".js" ? "application/javascript" : "text/html";
+        let contentType = "text/html"; // Padrão
 
+        switch (ext) {
+            case ".css":
+                contentType = "text/css";
+                break;
+            case ".js":
+                contentType = "application/javascript";
+                break;
+            case ".png":
+                contentType = "image/png";
+                break;
+            case ".jpg":
+            case ".jpeg":
+                contentType = "image/jpeg";
+                break;
+            case ".gif":
+                contentType = "image/gif";
+                break;
+            case ".woff":
+            case ".woff2":
+                contentType = "font/woff2";
+                break;
+            // Adicione mais tipos conforme necessário (ex: .mp3, .svg)
+        }
         res.writeHead(200, { "Content-Type": contentType });
         res.end(data);
     });

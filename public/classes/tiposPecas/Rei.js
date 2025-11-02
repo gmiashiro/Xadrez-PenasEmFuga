@@ -1,5 +1,5 @@
 class Rei extends Peca {
-    constructor() {
-        
+    constructor(config) {
+        super(config);
     }
 }

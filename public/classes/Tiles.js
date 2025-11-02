@@ -10,11 +10,14 @@ class Tiles {
 
         this.selectedTile = null;
 
+        this.pecas = [];
+
         this.boardImage = new Image();
         this.boardImage.src = "./assets/hud/background/xadrezFundo.png";
 
         this.boardImage.onload = () => {
-            this.draw();
+            this._initializeBoard();
+            this.gameLoop();
         };
     }
 
@@ -31,7 +34,7 @@ class Tiles {
             this.ctx.fillRect(pixelX, pixelY, this.TILE_SIZE, this.TILE_SIZE);
         }
 
-        // Aqui também ficará a função de desenhas as peças. 
+        this.pecas.forEach(peca => peca.draw(this.ctx));
     }
 
     handleGridClick(tileX, tileY) {
@@ -48,8 +51,6 @@ class Tiles {
         } else {
             console.log("Classe Tiles: Tile desmarcado.");
         }
-
-        this.draw();
     }
 
     getTileCoordsFromPixels(pixelX, pixelY) {
@@ -63,5 +64,46 @@ class Tiles {
             return null;
         }
         return { x: tileX, y: tileY };
+    }
+
+    _initializeBoard(){
+        const path = "./assets/spriteSheets";
+        const redConfig = { tiles: this, directionMoviment: "down"};
+        const blueConfig = { tiles: this, directionMoviment: "up"};
+
+        // Time Vermelho (Traseira - y=0, Peões - y=1)
+        this.pecas.push(new Torre({ ...redConfig, gridX: 0, gridY: 0, spriteSheet: `${path}/red/torreRed.png` }));
+        this.pecas.push(new Cavalo({ ...redConfig, gridX: 1, gridY: 0, spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Bispo({ ...redConfig, gridX: 2, gridY: 0, spriteSheet: `${path}/red/bispoRed.png` }));
+        this.pecas.push(new Rainha({ ...redConfig, gridX: 3, gridY: 0, spriteSheet: `${path}/red/rainhaRed.png` }));
+        this.pecas.push(new Rei({ ...redConfig, gridX: 4, gridY: 0, spriteSheet: `${path}/red/reiRed.png` }));
+        this.pecas.push(new Bispo({ ...redConfig, gridX: 5, gridY: 0, spriteSheet: `${path}/red/bispoRed.png` }));
+        this.pecas.push(new Cavalo({ ...redConfig, gridX: 6, gridY: 0, spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Torre({ ...redConfig, gridX: 7, gridY: 0, spriteSheet: `${path}/red/torreRed.png` }));
+
+        for (let i = 0; i < 8; i++) {
+            this.pecas.push(new Peao({ ...redConfig, gridX: i, gridY: 1, spriteSheet: `${path}/red/peaoRed.png` }));
+        }
+
+        // Time Azul (Traseira - y=7, Peões - y=6)
+        this.pecas.push(new Torre({ ...blueConfig, gridX: 0, gridY: 7, spriteSheet: `${path}/blue/torreBlue.png` }));
+        this.pecas.push(new Cavalo({ ...blueConfig, gridX: 1, gridY: 7, spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Bispo({ ...blueConfig, gridX: 2, gridY: 7, spriteSheet: `${path}/blue/bispoBlue.png` }));
+        this.pecas.push(new Rainha({ ...blueConfig, gridX: 3, gridY: 7, spriteSheet: `${path}/blue/rainhaBlue.png` }));
+        this.pecas.push(new Rei({ ...blueConfig, gridX: 4, gridY: 7, spriteSheet: `${path}/blue/reiBlue.png` }));
+        this.pecas.push(new Bispo({ ...blueConfig, gridX: 5, gridY: 7, spriteSheet: `${path}/blue/bispoBlue.png` }));
+        this.pecas.push(new Cavalo({ ...blueConfig, gridX: 6, gridY: 7, spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Torre({ ...blueConfig, gridX: 7, gridY: 7, spriteSheet: `${path}/blue/torreBlue.png` }));
+
+        for (let i = 0; i < 8; i++) {
+            this.pecas.push(new Peao({ ...blueConfig, gridX: i, gridY: 6, spriteSheet: `${path}/blue/peaoBlue.png` }));
+        }
+
+        console.log(`Tabuleiro inicializado com ${this.pecas.length} peças.`);
+    }
+
+    gameLoop(){
+        this.draw();
+        requestAnimationFrame(() => this.gameLoop());
     }
 }
