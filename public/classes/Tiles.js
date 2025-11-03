@@ -8,7 +8,7 @@ class Tiles {
         const gridAreaSize = this.BOARD_SIZE - (2 * this.GRID_OFFSET);
         this.TILE_SIZE = gridAreaSize / 8;
 
-        this.selectedTile = null;
+        this.selectedPeca = null;
 
         this.pecas = [];
 
@@ -26,9 +26,9 @@ class Tiles {
 
         this.ctx.drawImage(this.boardImage, 0, 0, this.canvas.width, this.canvas.height);
 
-        if(this.selectedTile) {
-            const pixelX = (this.selectedTile.x * this.TILE_SIZE) + this.GRID_OFFSET;
-            const pixelY = (this.selectedTile.y * this.TILE_SIZE) + this.GRID_OFFSET;
+        if(this.selectedPeca) {
+            const pixelX = (this.selectedPeca.x * this.TILE_SIZE) + this.GRID_OFFSET;
+            const pixelY = (this.selectedPeca.y * this.TILE_SIZE) + this.GRID_OFFSET;
 
             this.ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             this.ctx.fillRect(pixelX, pixelY, this.TILE_SIZE, this.TILE_SIZE);
@@ -38,18 +38,45 @@ class Tiles {
     }
 
     handleGridClick(tileX, tileY) {
-        if(this.selectedTile && this.selectedTile.x === tileX && this.selectedTile.y === tileY) {
-            this.selectedTile = null;
+        
+        // descobre qual peça (se houver) está na posição clicada
+        const clickedPeca = this.findPecaAt(tileX, tileY);
+
+        if(this.clickedPeca) {
+            console.log(`Clicou na peça ${clickedPeca.color} em (${tileX}, ${tileY})`);
         } else {
-            this.selectedTile = { x: tileX, y: tileY };
+            console.log(`Clicou na casa vazia em (${tileX}, ${tileY})`);
         }
 
-        //teste
-        console.log(`Classe Tiles: Clique no tile (x, y): ${tileX}, ${tileY}`);
-        if (this.selectedTile) {
-            console.log("Classe Tiles: Tile selecionado.");
+        // Já possui uma peça selecionada
+        if (this.selectedPeca) {
+            // se clicar no mesmo tile da peça selecionada, desseleciona
+            if (clickedPeca === this.selectedPeca){
+                this.selectedPeca = null;
+                console.log("Peça desselecionada.");
+            // se clicar em tile com uma peça amiga
+            } else if (clickedPeca && clickedPeca.color === this.selectedPeca.color) {
+                this.selectedPeca = clickedPeca;
+                console.log("selecao trocada para peça amiga");
+            // Se clicar em tile vazio (movimento)
+            } else if (!clickedPeca) {
+                console.log("movendo a peça para um local vazio");
+                this.selectedPeca.moveTo(tileX, tileY);
+                this.selectedPeca = null;
+            // se clicar em um tile da peça inimiga (captura)
+            } else if (clickedPeca && clickedPeca.color !== this.selectedPeca.color) {
+                console.log("capturando peça inimiga");
+                this.capturePeca(clickedPeca);
+                this.selectedPeca.moveTo(tileX, tileY);
+                this.selectedPeca = null;
+            }
+        // Não possui peça selecionada
         } else {
-            console.log("Classe Tiles: Tile desmarcado.");
+            if (clickedPeca) {
+                this.selectedPeca = clickedPeca;
+                console.log("Peça selecionada:", clickedPeca);
+            }
+            // se clicou em um tile vazio, não faz nada
         }
     }
 
@@ -66,10 +93,20 @@ class Tiles {
         return { x: tileX, y: tileY };
     }
 
+    // encontra e retorna o objeto Peca na posição (gridX, gridY), ou undefined se não houver peça
+    findPecaAt(gridX, gridY) {
+        return this.pecas.find(peca => peca.gridX === gridX && peca.gridY === gridY);
+    }
+
+    // Remove a peça do jogo
+    capturePeca(pecaToCapture) {
+        this.pecas = this.pecas.filter(peca => peca !== pecaToCapture);
+    }
+
     _initializeBoard(){
         const path = "./assets/spriteSheets";
-        const redConfig = { tiles: this, directionMoviment: "down"};
-        const blueConfig = { tiles: this, directionMoviment: "up"};
+        const redConfig = { tiles: this, directionMoviment: "down", color: "red" };
+        const blueConfig = { tiles: this, directionMoviment: "up", color: "blue" };
 
         // Time Vermelho (Traseira - y=0, Peões - y=1)
         this.pecas.push(new Torre({ ...redConfig, gridX: 0, gridY: 0, spriteSheet: `${path}/red/torreRed.png` }));

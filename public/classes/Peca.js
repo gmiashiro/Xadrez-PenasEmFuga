@@ -5,18 +5,27 @@ class Peca extends Sprite {
 
         this.gridX = config.gridX;
         this.gridY = config.gridY;
+        this.color = config.color; // red ou blue
         this.tiles = config.tiles;
 
         this.frameSize = 32;
         this.drawSize = this.tiles.TILE_SIZE;
 
+        this.recalculatePixelPosition();
+    }
+
+    recalculatePixelPosition(){
         this.pixelX = (this.gridX * this.tiles.TILE_SIZE) + this.tiles.GRID_OFFSET;
         this.pixelY = (this.gridY * this.tiles.TILE_SIZE) + this.tiles.GRID_OFFSET;
     }
 
-    draw(ctx){
+    moveTo(gridX, gridY){
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.recalculatePixelPosition();
+    }
 
-        console.log("Tentando desenhar:", this.spriteSheet.src, "Carregada:", this.isLoaded);
+    draw(ctx){
 
         if(!this.isLoaded) return;
 
