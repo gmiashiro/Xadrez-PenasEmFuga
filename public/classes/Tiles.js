@@ -59,7 +59,7 @@ class Tiles {
                 this.selectedPeca = clickedPeca;
                 console.log("selecao trocada para peça amiga");
             // Se clicar em tile vazio (movimento)
-            } else if (!clickedPeca) {
+            } else if (!clickedPeca && this.selectedPeca.canBeMoved(tileX, tileY)) {
                 console.log("movendo a peça para um local vazio");
                 this.selectedPeca.moveTo(tileX, tileY);
                 this.selectedPeca = null;
