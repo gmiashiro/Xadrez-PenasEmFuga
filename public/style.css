@@ -49,9 +49,10 @@ body {
 }
 
 .game-container canvas {
-    width: 100%;
-    height: 100%;
+    width: 512px;
+    height: 512px;
     image-rendering: pixelated;
+    image-rendering:crisp-edges;
 }
 
 .pecas-capturadas {
