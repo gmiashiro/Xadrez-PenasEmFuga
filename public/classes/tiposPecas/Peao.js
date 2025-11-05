@@ -22,9 +22,17 @@ class Peao extends Peca {
                         return false;
                     }
                 } else {
-                    if (futureGridY == this.gridY+1 && futureGridX == this.gridX) {
-                        return true;
+                    if (this.gridY == 1) {
+                        // se for o primeiro movimento do peão, ele pode andar duas casas
+                        if (futureGridY <= this.gridY+2 && futureGridX == this.gridX) {
+                            return true;
+                        }
+                    } else {
+                        if (futureGridY == this.gridY+1 && futureGridX == this.gridX) {
+                            return true;
+                        }
                     }
+                    
                 }
 
                 return false;
@@ -37,8 +45,15 @@ class Peao extends Peca {
                         return false;
                     }
                 } else {
-                    if (futureGridY == this.gridY-1 && futureGridX == this.gridX) {
-                        return true;
+                    if (this.gridY == 6) {
+                        // se for o primeiro movimento do peão, ele pode andar duas casas
+                        if (futureGridY >= this.gridY-2 && futureGridX == this.gridX) {
+                            return true;
+                        }
+                    } else {
+                        if (futureGridY == this.gridY-1 && futureGridX == this.gridX) {
+                            return true;
+                        }
                     }
                 }
 
