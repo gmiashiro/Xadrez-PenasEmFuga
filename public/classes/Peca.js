@@ -7,6 +7,7 @@ class Peca extends Sprite {
         this.gridY = config.gridY;
         this.color = config.color; // red ou blue
         this.tiles = config.tiles;
+        this.facing = config.facing || "front"; // front ou back
 
         this.frameSize = 32;
         this.drawSize = this.tiles.TILE_SIZE;

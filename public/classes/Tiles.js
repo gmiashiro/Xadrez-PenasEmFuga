@@ -105,8 +105,8 @@ class Tiles {
 
     _initializeBoard(){
         const path = "./assets/spriteSheets";
-        const redConfig = { tiles: this, directionMoviment: "down", color: "red" };
-        const blueConfig = { tiles: this, directionMoviment: "up", color: "blue" };
+        const redConfig = { tiles: this, directionMoviment: "down", color: "red", facing: "front" };
+        const blueConfig = { tiles: this, directionMoviment: "up", color: "blue", facing: "back" };
 
         // Time Vermelho (Traseira - y=0, Peões - y=1)
         this.pecas.push(new Torre({ ...redConfig, gridX: 0, gridY: 0, spriteSheet: `${path}/red/torreRed.png` }));
