@@ -62,13 +62,9 @@ class Tiles {
                 console.log("movendo a peça para um local vazio");
                 this.selectedPeca.moveTo(tileX, tileY);
                 if (this.selectedPeca.isPeao) {
-                    if (this.selectedPeca.facing == "front" && tileY == 7) {
-                        var evolucao = new CustomEvent("evolucao");
-                        document.dispatchEvent(evolucao);
-                    } else if (this.selectedPeca.facing == "back" && tileY == 0) {
-                        var evolucao = new CustomEvent("evolucao");
-                        document.dispatchEvent(evolucao);
-                    }
+                    if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
+                        this.selectedPeca.evolucao();
+                    } 
                 }
                 this.selectedPeca = null;
             // se clicar em um tile da peça inimiga (captura)
@@ -80,13 +76,9 @@ class Tiles {
                     this.capturePeca(clickedPeca);
                     this.selectedPeca.moveTo(tileX, tileY);
                     if (this.selectedPeca.isPeao) {
-                        if (this.selectedPeca.facing == "front" && tileY == 7) {
-                            var evolucao = new CustomEvent("evolucao");
-                            document.dispatchEvent(evolucao);
-                        } else if (this.selectedPeca.facing == "back" && tileY == 0) {
-                            var evolucao = new CustomEvent("evolucao");
-                            document.dispatchEvent(evolucao);
-                        }
+                        if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
+                            this.selectedPeca.evolucao();
+                        } 
                     }
                     this.selectedPeca = null;
                 }

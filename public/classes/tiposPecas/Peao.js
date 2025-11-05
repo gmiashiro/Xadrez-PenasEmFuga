@@ -2,18 +2,13 @@ class Peao extends Peca {
     constructor(config) {
         super(config);
         this.isPeao = true;
+        this.evoluiu = false;
 
         this.isCaptureActive = false;
         // Para saber se uma peça vai ser capturada
         document.addEventListener(("isCapture"), (e) => {
             this.isCaptureActive = true;
         });
-
-        // Para saber se vai evoluir
-        document.addEventListener(("evolucao"), (e) => {
-            this.evolucao();
-        });
-
     }
 
     canBeMoved(futureGridX, futureGridY) {
@@ -52,7 +47,12 @@ class Peao extends Peca {
     }
 
     evolucao() {
-        openEvolucaoPeaoWindow();
+        if (this.evoluiu) {
+            return;
+        } else {
+            this.evoluiu = true;
+            openEvolucaoPeaoWindow();
+        }
     }
 
 }
