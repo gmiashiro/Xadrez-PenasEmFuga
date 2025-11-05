@@ -156,6 +156,9 @@ function openEvolucaoPeaoWindow() {
     body.appendChild(evolucaoWindow);
 
     const buttons = document.querySelectorAll(".evolucao-button");
+
+    console.log("veio no script")
+
     buttons.forEach(button => {
         button.onclick = () => { 
             setTimeout(() => {
