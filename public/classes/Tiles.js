@@ -27,9 +27,8 @@ class Tiles {
         this.ctx.drawImage(this.boardImage, 0, 0, this.canvas.width, this.canvas.height);
 
         if(this.selectedPeca) {
-            const pixelX = (this.selectedPeca.x * this.TILE_SIZE) + this.GRID_OFFSET;
-            const pixelY = (this.selectedPeca.y * this.TILE_SIZE) + this.GRID_OFFSET;
-
+            const pixelX = (this.selectedPeca.gridX * this.TILE_SIZE) + this.GRID_OFFSET;
+            const pixelY = (this.selectedPeca.gridY * this.TILE_SIZE) + this.GRID_OFFSET;
             this.ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             this.ctx.fillRect(pixelX, pixelY, this.TILE_SIZE, this.TILE_SIZE);
         }
@@ -62,13 +61,35 @@ class Tiles {
             } else if (!clickedPeca && this.selectedPeca.canBeMoved(tileX, tileY)) {
                 console.log("movendo a peça para um local vazio");
                 this.selectedPeca.moveTo(tileX, tileY);
+                if (this.selectedPeca.isPeao) {
+                    if (this.selectedPeca.facing == "front" && tileY == 7) {
+                        var evolucao = new CustomEvent("evolucao");
+                        document.dispatchEvent(evolucao);
+                    } else if (this.selectedPeca.facing == "back" && tileY == 0) {
+                        var evolucao = new CustomEvent("evolucao");
+                        document.dispatchEvent(evolucao);
+                    }
+                }
                 this.selectedPeca = null;
             // se clicar em um tile da peça inimiga (captura)
             } else if (clickedPeca && clickedPeca.color !== this.selectedPeca.color) {
-                console.log("capturando peça inimiga");
-                this.capturePeca(clickedPeca);
-                this.selectedPeca.moveTo(tileX, tileY);
-                this.selectedPeca = null;
+                var isCapture = new CustomEvent("isCapture");
+                document.dispatchEvent(isCapture);
+                if (this.selectedPeca.canBeMoved(tileX, tileY)) {
+                    console.log("capturando peça inimiga");
+                    this.capturePeca(clickedPeca);
+                    this.selectedPeca.moveTo(tileX, tileY);
+                    if (this.selectedPeca.isPeao) {
+                        if (this.selectedPeca.facing == "front" && tileY == 7) {
+                            var evolucao = new CustomEvent("evolucao");
+                            document.dispatchEvent(evolucao);
+                        } else if (this.selectedPeca.facing == "back" && tileY == 0) {
+                            var evolucao = new CustomEvent("evolucao");
+                            document.dispatchEvent(evolucao);
+                        }
+                    }
+                    this.selectedPeca = null;
+                }
             }
         // Não possui peça selecionada
         } else {

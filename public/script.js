@@ -159,6 +159,7 @@ function openEvolucaoPeaoWindow() {
     buttons.forEach(button => {
         button.onclick = () => { 
             setTimeout(() => {
+                console.log("ue")
                 evolucaoWindow.remove();
                 camadaEscura.remove();
             }, 300);
