@@ -32,67 +32,39 @@ ws.onopen = () => {
 
     
 };
+
 ws.onmessage = (event) => {
-    const msgServer = JSON.parse(event.data);
-
-    // Escutando mensagens do servidor
-    if (msgServer.tipo == "novoJogador") {
-        gameManager.startTabuleiro(msgServer.jogador);
+    const msg = JSON.parse(event.data);
+    
+    switch(msg.tipo) {
+        case "novoJogador":
+            // Inicia o tabuleiro quando o servidor atribui um ID de jogador
+            gameManager.startTabuleiro(msg.jogador);
+            break;
+        case "passouQuantidadeJogadores":
+            alert("O jogo já está cheio. Tente mais tarde.");
+            break;
+        
+        // --- NOVOS CASOS ---
+        case "oponenteMoveuPeca":
+            // Passa a jogada para o tabuleiro aplicar
+            if (gameManager.tabuleiro) {
+                gameManager.tabuleiro.aplicarMovimentoOponente(msg);
+            }
+            break;
+        case "oponenteCapturouPeca":
+            // Passa a captura para o tabuleiro aplicar
+            if (gameManager.tabuleiro) {
+                gameManager.tabuleiro.aplicarCapturaOponente(msg);
+            }
+            break;
+        case "oponenteDesconectou":
+            alert("Seu oponente desconectou. Atualize a página para encontrar um novo jogo.");
+            // (Aqui você pode adicionar uma lógica para resetar o jogo)
+            break;
+        // --- FIM DOS NOVOS CASOS ---
     }
-
-    if (msgServer.tipo == "passouQuantidadeJogadores") {
-        console.log("deu mais que 2 pessoas");
-    }
-
-
-    console.log("Mensagem do servidor:", msgServer);
 };
-
-// const msgBox = document.getElementById("messages");
-// const input = document.getElementById("msgInput");
-// const sendBtn = document.getElementById("sendBtn");
-
-// ws.onopen = () => {
-//     msgBox.innerHTML += "<div><i>Conectado ao servidor</i></div>";
-// };
-
-// ws.onmessage = (event) => {
-//     msgBox.innerHTML += `<div><b>Mensagem:</b> ${event.data}</div>`;
-// };
-
-// sendBtn.addEventListener("click", () => {
-//     const msg = input.value.trim();
-//     if (msg !== "") {
-//         ws.send(msg);
-//         msgBox.innerHTML += `<div><b>Você:</b> ${msg}</div>`;
-//         input.value = "";
-//     }
-// });
-
-
-
-
-
-
-
-// // 1. Cria uma instância do nosso gerenciador de tabuleiro
-// const tiles = new Tiles(canvas, ctx);
-
-// // 2. Adiciona o listener de clique no canvas
-// canvas.addEventListener("click", (event) => {
-//     // Pega a posição do clique relativa ao canvas
-//     const clickX = event.offsetX;
-//     const clickY = event.offsetY;
-
-//     // Converte a posição do pixel (ex: 130px) para o índice da grade (ex: 2)
-//     // A própria classe Tiles sabe seu tamanho, então pedimos para ela converter
-//     const tileCoords = tiles.getTileCoordsFromPixels(clickX, clickY);
-
-//     if (tileCoords) {
-//         // Delega o evento de clique para a classe Tiles
-//         tiles.handleGridClick(tileCoords.x, tileCoords.y);
-//     }
-// });
 
 // A música e o som começam ligadas
 var sound = true;

@@ -49,42 +49,92 @@ const server = http.createServer((req, res) => {
 // Cria servidor WebSocket
 const wss = new WebSocket.Server({ server });
 
-var quantJogadores = 0;
+let jogador1 = null;
+let jogador2 = null;
 
 // Lista de conexões
 wss.on("connection", (ws) => {
     console.log("Novo cliente conectado servidor!");
-    quantJogadores++;
-    console.log(quantJogadores);
-    if (quantJogadores > 2) {
-        ws.send(JSON.stringify({
-            tipo: "passouQuantidadeJogadores",
-        }));
-    } else {
+    if (jogador1 === null) {
+        jogador1 = ws;
+        ws.jogadorId = 1;
+        console.log("Jogador 1 conectado.");
         ws.send(JSON.stringify({
             tipo: "novoJogador",
-            jogador: quantJogadores
+            jogador: 1
         }));
+    } else if (jogador2 === null) {
+        jogador2 = ws;
+        ws.jogadorId = 2;
+        console.log("Jogador 2 conectado.");
+        ws.send(JSON.stringify({
+            tipo: "novoJogador",
+            jogador: 2
+        }));
+    } else {
+        // Jogo cheio
+        console.log("Conexão recusada. Jogo cheio.");
+        ws.send(JSON.stringify({
+            tipo: "passouQuantidadeJogadores"
+        }));
+        ws.close();
+        return;
     }
-    
-    ws.on("message", (event) => {
-        const msgCliente = JSON.parse(event);
 
-        if (msgCliente.tipo == "pecaCapturada") {
-            console.log("Coordenadas da peça capturada: ("+ msgCliente.pecaCapturadaX + ", " + msgCliente.pecaCapturadaY + ")");
-            console.log("Jogador que capturou: " + msgCliente.jogadorQueCapturou);
+    ws.on("message", (message) => {
+        const msgCliente = JSON.parse(message.toString());
+        const remetenteId = ws.jogadorId;
+
+        // Encontra o destinatário
+        let destinatario = null;
+        if (remetenteId === 1 && jogador2) {
+            destinatario = jogador2;
+        } else if (remetenteId === 2 && jogador1) {
+            destinatario = jogador1;
         }
 
-        if (msgCliente.tipo == "pecaMovida") {
-            console.log("Coordenadas antigas da peça: ("+ msgCliente.antigoX + ", " + msgCliente.antigoY + ")");
-            console.log("Coordenadas novas da peça: ("+ msgCliente.novoX + ", " + msgCliente.novoY + ")");
-            console.log("Jogador: " + msgCliente.jogador);
+        // Se houver um destinatário e ele estiver online, envie a mensagem
+        if (destinatario && destinatario.readyState === WebSocket.OPEN) {
+            // Criamos novos tipos de mensagem para o oponente
+            let msgParaOponente = { ...msgCliente }; // Copia a mensagem
+
+            if (msgCliente.tipo === "pecaMovida") {
+                msgParaOponente.tipo = "oponenteMoveuPeca";
+            } else if (msgCliente.tipo === "pecaCapturada") {
+                msgParaOponente.tipo = "oponenteCapturouPeca";
+            }
+
+            destinatario.send(JSON.stringify(msgParaOponente));
+        }
+
+        // Log no servidor (como antes)
+        if (msgCliente.tipo === "pecaMovida") {
+            console.log(`Jogador ${remetenteId} moveu ${msgCliente.antigoX},${msgCliente.antigoY} para ${msgCliente.novoX},${msgCliente.novoY}`);
+        }
+        if (msgCliente.tipo === "pecaCapturada") {
+            console.log(`Jogador ${remetenteId} capturou ${msgCliente.pecaCapturadaX},${msgCliente.pecaCapturadaY}`);
         }
     });
 
+    // 3. LIDAR COM DESCONEXÃO (CLEANUP)
     ws.on("close", () => {
-        quantJogadores--;
-        console.log("Cliente desconectado.");
+        const remetenteId = ws.jogadorId;
+        let oponente = null;
+
+        if (remetenteId === 1) {
+            jogador1 = null; // Libera o slot
+            oponente = jogador2;
+            console.log("Jogador 1 desconectado.");
+        } else if (remetenteId === 2) {
+            jogador2 = null; // Libera o slot
+            oponente = jogador1;
+            console.log("Jogador 2 desconectado.");
+        }
+
+        // Avisa o oponente que o outro jogador saiu
+        if (oponente && oponente.readyState === WebSocket.OPEN) {
+            oponente.send(JSON.stringify({ tipo: "oponenteDesconectou" }));
+        }
     });
 });
 

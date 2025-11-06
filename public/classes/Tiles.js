@@ -44,7 +44,7 @@ class Tiles {
         // descobre qual peça (se houver) está na posição clicada
         const clickedPeca = this.findPecaAt(tileX, tileY);
 
-        if(this.clickedPeca) {
+        if(clickedPeca) { // ERRO: 'this.clickedPeca' não existe
             console.log(`Clicou na peça ${clickedPeca.color} em (${tileX}, ${tileY})`);
         } else {
             console.log(`Clicou na casa vazia em (${tileX}, ${tileY})`);
@@ -100,7 +100,22 @@ class Tiles {
                     document.dispatchEvent(capturandoPeca);
 
                     this.capturePeca(clickedPeca);
+
+                    const antigoX = this.selectedPeca.gridX;
+                    const antigoY = this.selectedPeca.gridY;
+
                     this.selectedPeca.moveTo(tileX, tileY);
+
+                    var pecaMovida = new CustomEvent("pecaMovida", {
+                        detail: {
+                            antigoX: antigoX,
+                            antigoY: antigoY,
+                            novoX: tileX,
+                            novoY: tileY,
+                            jogador: this.jogador
+                        }
+                    });
+                    document.dispatchEvent(pecaMovida);
                     
                     if (this.selectedPeca.isPeao) {
                         if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
