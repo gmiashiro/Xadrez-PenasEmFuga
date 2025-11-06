@@ -1,5 +1,5 @@
 class Tiles {
-    constructor(canvas, ctx) {
+    constructor(canvas, ctx, jogador) {
         this.canvas = canvas;
         this.ctx = ctx;
 
@@ -19,6 +19,9 @@ class Tiles {
             this._initializeBoard();
             this.gameLoop();
         };
+
+        this.jogador = jogador;
+
     }
 
     draw() {
@@ -60,12 +63,25 @@ class Tiles {
             // Se clicar em tile vazio (movimento)
             } else if (!clickedPeca && this.selectedPeca.canBeMoved(tileX, tileY)) {
                 console.log("movendo a peça para um local vazio");
+                console.log(this.jogador);
+                var pecaMovida = new CustomEvent("pecaMovida", {
+                        detail: {
+                            antigoX: this.selectedPeca.gridX,
+                            antigoY: this.selectedPeca.gridY,
+                            novoX: tileX,
+                            novoY: tileY,
+                            jogador: this.jogador
+                        }
+                    });
+                document.dispatchEvent(pecaMovida);
+
                 this.selectedPeca.moveTo(tileX, tileY);
                 if (this.selectedPeca.isPeao) {
                     if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
                         this.selectedPeca.evolucao();
                     } 
                 }
+                
                 this.selectedPeca = null;
             // se clicar em um tile da peça inimiga (captura)
             } else if (clickedPeca && clickedPeca.color !== this.selectedPeca.color) {
@@ -73,13 +89,25 @@ class Tiles {
                 document.dispatchEvent(isCapture);
                 if (this.selectedPeca.canBeMoved(tileX, tileY)) {
                     console.log("capturando peça inimiga");
+
+                    var capturandoPeca = new CustomEvent("capturandoPeca", {
+                        detail: {
+                            pecaCapturadaX: clickedPeca.gridX,
+                            pecaCapturadaY: clickedPeca.gridY,
+                            jogadorQueCapturou: this.jogador
+                        }
+                    });
+                    document.dispatchEvent(capturandoPeca);
+
                     this.capturePeca(clickedPeca);
                     this.selectedPeca.moveTo(tileX, tileY);
+                    
                     if (this.selectedPeca.isPeao) {
                         if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
                             this.selectedPeca.evolucao();
                         } 
                     }
+                    
                     this.selectedPeca = null;
                 }
             }
