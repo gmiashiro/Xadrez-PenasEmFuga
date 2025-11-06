@@ -49,22 +49,41 @@ const server = http.createServer((req, res) => {
 // Cria servidor WebSocket
 const wss = new WebSocket.Server({ server });
 
+var quantJogadores = 0;
+
 // Lista de conexões
 wss.on("connection", (ws) => {
-    console.log("Novo cliente conectado!");
+    console.log("Novo cliente conectado servidor!");
+    quantJogadores++;
+    console.log(quantJogadores);
+    if (quantJogadores > 2) {
+        ws.send(JSON.stringify({
+            tipo: "passouQuantidadeJogadores",
+        }));
+    } else {
+        ws.send(JSON.stringify({
+            tipo: "novoJogador",
+            jogador: quantJogadores
+        }));
+    }
+    
+    ws.on("message", (event) => {
+        const msgCliente = JSON.parse(event);
 
-    ws.on("message", (msg) => {
-        console.log("Mensagem recebida:", msg.toString());
+        if (msgCliente.tipo == "pecaCapturada") {
+            console.log("Coordenadas da peça capturada: ("+ msgCliente.pecaCapturadaX + ", " + msgCliente.pecaCapturadaY + ")");
+            console.log("Jogador que capturou: " + msgCliente.jogadorQueCapturou);
+        }
 
-        // Reenvia a mensagem para todos os clientes (broadcast)
-        wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(msg.toString());
-            }
-        });
+        if (msgCliente.tipo == "pecaMovida") {
+            console.log("Coordenadas antigas da peça: ("+ msgCliente.antigoX + ", " + msgCliente.antigoY + ")");
+            console.log("Coordenadas novas da peça: ("+ msgCliente.novoX + ", " + msgCliente.novoY + ")");
+            console.log("Jogador: " + msgCliente.jogador);
+        }
     });
 
     ws.on("close", () => {
+        quantJogadores--;
         console.log("Cliente desconectado.");
     });
 });
@@ -72,3 +91,5 @@ wss.on("connection", (ws) => {
 // Inicia o servidor
 const PORT = 51171;
 server.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
+
+// GAME MANAGER

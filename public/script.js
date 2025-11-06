@@ -1,13 +1,51 @@
 //const { createContext } = require("react");
 const canvas = document.querySelector(".game-canvas");
 const ctx = canvas.getContext("2d");
+const gameManager = new GameManager();
+
+// Aqui no script, ele escuta e envia mensagens ao servidor, comunicando sobre o jogo em si
 
 const ws = new WebSocket("ws://localhost:51171");
 ws.onopen = () => {
     console.log("Conectado ao servidor WebSocket");
+
+    // Escutando acontecimentos do jogo e comunicando ao servidor sobre elas
+    document.addEventListener("capturandoPeca", (e) => {
+        ws.send(JSON.stringify({
+            tipo: "pecaCapturada",
+            pecaCapturadaX: e.detail.pecaCapturadaX,
+            pecaCapturadaY: e.detail.pecaCapturadaY,
+            jogadorQueCapturou: e.detail.jogadorQueCapturou
+        }))
+    });
+
+    document.addEventListener("pecaMovida", (e) => {
+        ws.send(JSON.stringify({
+            tipo: "pecaMovida",
+            antigoX: e.detail.antigoX,
+            antigoY: e.detail.antigoY,
+            novoX: e.detail.novoX,
+            novoY: e.detail.novoY,
+            jogador: e.detail.jogador
+        }))
+    });
+
+    
 };
 ws.onmessage = (event) => {
-    console.log("Mensagem do servidor:", event.data);
+    const msgServer = JSON.parse(event.data);
+
+    // Escutando mensagens do servidor
+    if (msgServer.tipo == "novoJogador") {
+        gameManager.startTabuleiro(msgServer.jogador);
+    }
+
+    if (msgServer.tipo == "passouQuantidadeJogadores") {
+        console.log("deu mais que 2 pessoas");
+    }
+
+
+    console.log("Mensagem do servidor:", msgServer);
 };
 
 // const msgBox = document.getElementById("messages");
@@ -31,24 +69,30 @@ ws.onmessage = (event) => {
 //     }
 // });
 
-// 1. Cria uma instância do nosso gerenciador de tabuleiro
-const tiles = new Tiles(canvas, ctx);
 
-// 2. Adiciona o listener de clique no canvas
-canvas.addEventListener("click", (event) => {
-    // Pega a posição do clique relativa ao canvas
-    const clickX = event.offsetX;
-    const clickY = event.offsetY;
 
-    // Converte a posição do pixel (ex: 130px) para o índice da grade (ex: 2)
-    // A própria classe Tiles sabe seu tamanho, então pedimos para ela converter
-    const tileCoords = tiles.getTileCoordsFromPixels(clickX, clickY);
 
-    if (tileCoords) {
-        // Delega o evento de clique para a classe Tiles
-        tiles.handleGridClick(tileCoords.x, tileCoords.y);
-    }
-});
+
+
+
+// // 1. Cria uma instância do nosso gerenciador de tabuleiro
+// const tiles = new Tiles(canvas, ctx);
+
+// // 2. Adiciona o listener de clique no canvas
+// canvas.addEventListener("click", (event) => {
+//     // Pega a posição do clique relativa ao canvas
+//     const clickX = event.offsetX;
+//     const clickY = event.offsetY;
+
+//     // Converte a posição do pixel (ex: 130px) para o índice da grade (ex: 2)
+//     // A própria classe Tiles sabe seu tamanho, então pedimos para ela converter
+//     const tileCoords = tiles.getTileCoordsFromPixels(clickX, clickY);
+
+//     if (tileCoords) {
+//         // Delega o evento de clique para a classe Tiles
+//         tiles.handleGridClick(tileCoords.x, tileCoords.y);
+//     }
+// });
 
 // A música e o som começam ligadas
 var sound = true;
