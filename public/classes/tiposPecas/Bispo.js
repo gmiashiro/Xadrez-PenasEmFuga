@@ -8,7 +8,7 @@ class Bispo extends Peca {
     }
 
     canBeMoved(futureGridX, futureGridY) {
-        if (this.belongsToDiagonal(futureGridX, futureGridY)) {
+        if (this.belongsToDiagonal(futureGridX, futureGridY) && this.isMovementFreeDiagonal(futureGridX, futureGridY)) {
             return true;
         } else {
             return false;
