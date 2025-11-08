@@ -9,6 +9,7 @@ class Peca extends Sprite {
         this.tiles = config.tiles;
         this.facing = config.facing || "front"; // front ou back
         this.isPeao = config.isPeao || false;
+        this.id = config.id;
 
         this.frameSize = 32;
         this.drawSize = this.tiles.TILE_SIZE;

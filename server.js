@@ -109,10 +109,10 @@ wss.on("connection", (ws) => {
 
         // Log no servidor (como antes)
         if (msgCliente.tipo === "pecaMovida") {
-            console.log(`Jogador ${remetenteId} moveu ${msgCliente.antigoX},${msgCliente.antigoY} para ${msgCliente.novoX},${msgCliente.novoY}`);
+            console.log(`Jogador ${remetenteId} moveu ${msgCliente.antigoX},${msgCliente.antigoY} para ${msgCliente.novoX},${msgCliente.novoY}, ${msgCliente.id}`);
         }
         if (msgCliente.tipo === "pecaCapturada") {
-            console.log(`Jogador ${remetenteId} capturou ${msgCliente.pecaCapturadaX},${msgCliente.pecaCapturadaY}`);
+            console.log(`Jogador ${remetenteId} capturou ${msgCliente.pecaCapturadaX},${msgCliente.pecaCapturadaY}, ${msgCliente.id}`);
         }
     });
 

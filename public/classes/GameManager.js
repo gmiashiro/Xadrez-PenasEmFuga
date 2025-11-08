@@ -7,10 +7,10 @@ class GameManager {
 
     startTabuleiro(jogador) {
         switch (jogador) {
-            case 1:
+            case 2:
                 console.log("Juninho Jr entrou no jogo");
                 break;
-            case 2:
+            case 1:
                 console.log("Pingo entrou no jogo");
                 break;
         }
