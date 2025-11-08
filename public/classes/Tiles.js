@@ -74,6 +74,7 @@ class Tiles {
                 console.log("movendo a peça para um local vazio");
                 console.log(this.jogador);
                 console.log(this.selectedPeca.id);
+                // this.selectedPeca.getPossibleMoves(tileX, tileY);
                 var pecaMovida = new CustomEvent("pecaMovida", {
                         detail: {
                             antigoX: this.selectedPeca.gridX,
@@ -170,6 +171,11 @@ class Tiles {
 
     findPecaId(id) {
         return this.pecas.find(peca => peca.id === id);
+    }
+
+    getPossibleMoves(peca) {
+        var tipoPeca = peca.constructor.name;
+        // console.log(peca.constructor.name);
     }
 
     // Remove a peça do jogo

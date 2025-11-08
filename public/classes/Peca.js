@@ -43,7 +43,98 @@ class Peca extends Sprite {
             // console.log(this.leftM, this.leftN, this.rightM, this.rightN);
             return false;
         }
+    }
 
+    isMovementFreeLines(futureGridX, futureGridY) {
+        if (this.gridX == futureGridX) {
+            // Movimento vertical
+            if (this.gridY > futureGridY) {
+                // Movimento para frente
+                for (var i = this.gridY-1; i > futureGridY; i--) {
+                    if (this.tiles.findPecaAt(this.gridX, i)) {
+                        // Se encontrou uma peça
+                        return false;
+                    };
+                }
+                return true;
+            }
+
+            if (this.gridY < futureGridY) {
+                // Movimento para trás
+                for (var i = this.gridY+1; i < futureGridY; i++) {
+                    if (this.tiles.findPecaAt(this.gridX, i)) {
+                        return false;
+                    };
+                }
+                return true;
+            }
+        }
+        if (this.gridY == futureGridY) {
+            // Movimento horizontal
+            if (this.gridX > futureGridX) {
+                // Movimento para a esquerda
+                for (var i = this.gridX-1; i > futureGridX; i--) {
+                    if (this.tiles.findPecaAt(i, this.gridY)) {
+                        return false;
+                    };
+                }
+                return true;
+            }
+
+            if (this.gridX < futureGridX) {
+                // Movimento para trás
+                for (var i = this.gridX+1; i < futureGridX; i++) {
+                    if (this.tiles.findPecaAt(i, this.gridY)) {
+                        return false;
+                    };
+                }
+                return true;
+            }
+        }
+    }
+
+    isMovementFreeDiagonal(futureGridX, futureGridY) {
+        if (futureGridX > this.gridX) {
+            // Movimentando em direção à direita
+            if (futureGridY > this.gridY) {
+                // Voltando no tabuleiro
+                for (var i = 1; i < futureGridX-this.gridX; i++) {
+                    if (this.tiles.findPecaAt(this.gridX+i, this.gridY+i)) {
+                        return false;
+                    };
+                }
+                return true;
+            } else {
+                // Avançando no tabuleiro
+                for (var i = 1; i < futureGridX-this.gridX; i++) {
+                    if (this.tiles.findPecaAt(this.gridX+i, this.gridY-i)) {
+                        return false;
+                    };
+                }
+                return true;
+            }
+        } else if (futureGridX < this.gridX) {
+            // Movimentando em direção à esquerda
+            if (futureGridY > this.gridY) {
+                // Voltando no tabuleiro
+                for (var i = 1; i < this.gridX-futureGridX; i++) {
+                    if (this.tiles.findPecaAt(this.gridX-i, this.gridY+i)) {
+                        return false;
+                    };
+                }
+                return true;
+            } else {
+                // Avançando no tabuleiro
+                for (var i = 1; i < this.gridX-futureGridX; i++) {
+                    if (this.tiles.findPecaAt(this.gridX-i, this.gridY-i)) {
+                        return false;
+                    };
+                }
+                return true;
+            }
+        }
+
+        
     }
 
     draw(ctx){
