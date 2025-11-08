@@ -16,7 +16,14 @@ class Tiles {
         this.boardImage.src = "./assets/hud/background/xadrezFundo.png";
 
         this.boardImage.onload = () => {
-            this._initializeBoard();
+
+            if (this.jogador == 1) {
+                this.initializeBoardPlayer_1();
+            } else if (this.jogador == 2) {
+                this.initializeBoardPlayer_2();
+            }
+
+            
             this.gameLoop();
         };
 
@@ -64,24 +71,25 @@ class Tiles {
             } else if (!clickedPeca && this.selectedPeca.canBeMoved(tileX, tileY)) {
                 console.log("movendo a peça para um local vazio");
                 console.log(this.jogador);
+                console.log(this.selectedPeca.id);
                 var pecaMovida = new CustomEvent("pecaMovida", {
                         detail: {
                             antigoX: this.selectedPeca.gridX,
                             antigoY: this.selectedPeca.gridY,
                             novoX: tileX,
                             novoY: tileY,
-                            jogador: this.jogador
+                            jogador: this.jogador,
+                            id: this.selectedPeca.id
                         }
                     });
                 document.dispatchEvent(pecaMovida);
-
                 this.selectedPeca.moveTo(tileX, tileY);
                 if (this.selectedPeca.isPeao) {
                     if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
                         this.selectedPeca.evolucao();
                     } 
                 }
-                
+                console.log(this.selectedPeca.id);
                 this.selectedPeca = null;
             // se clicar em um tile da peça inimiga (captura)
             } else if (clickedPeca && clickedPeca.color !== this.selectedPeca.color) {
@@ -94,7 +102,8 @@ class Tiles {
                         detail: {
                             pecaCapturadaX: clickedPeca.gridX,
                             pecaCapturadaY: clickedPeca.gridY,
-                            jogadorQueCapturou: this.jogador
+                            jogadorQueCapturou: this.jogador,
+                            id: clickedPeca.id
                         }
                     });
                     document.dispatchEvent(capturandoPeca);
@@ -112,7 +121,8 @@ class Tiles {
                             antigoY: antigoY,
                             novoX: tileX,
                             novoY: tileY,
-                            jogador: this.jogador
+                            jogador: this.jogador,
+                            id: this.selectedPeca.id
                         }
                     });
                     document.dispatchEvent(pecaMovida);
@@ -154,42 +164,86 @@ class Tiles {
         return this.pecas.find(peca => peca.gridX === gridX && peca.gridY === gridY);
     }
 
+    findPecaId(id) {
+        return this.pecas.find(peca => peca.id === id);
+    }
+
     // Remove a peça do jogo
     capturePeca(pecaToCapture) {
         this.pecas = this.pecas.filter(peca => peca !== pecaToCapture);
     }
 
-    _initializeBoard(){
+    initializeBoardPlayer_1(){
         const path = "./assets/spriteSheets";
-        const redConfig = { tiles: this, directionMoviment: "down", color: "red", facing: "front" };
-        const blueConfig = { tiles: this, directionMoviment: "up", color: "blue", facing: "back" };
+        const rivalConfig = { tiles: this, directionMoviment: "down", color: "red", facing: "front" };
+        const playerConfig = { tiles: this, directionMoviment: "up", color: "blue", facing: "back" };
 
         // Time Vermelho (Traseira - y=0, Peões - y=1)
-        this.pecas.push(new Torre({ ...redConfig, gridX: 0, gridY: 0, spriteSheet: `${path}/red/torreRed.png` }));
-        this.pecas.push(new Cavalo({ ...redConfig, gridX: 1, gridY: 0, spriteSheet: `${path}/red/cavaloRed.png` }));
-        this.pecas.push(new Bispo({ ...redConfig, gridX: 2, gridY: 0, spriteSheet: `${path}/red/bispoRed.png` }));
-        this.pecas.push(new Rainha({ ...redConfig, gridX: 3, gridY: 0, spriteSheet: `${path}/red/rainhaRed.png` }));
-        this.pecas.push(new Rei({ ...redConfig, gridX: 4, gridY: 0, spriteSheet: `${path}/red/reiRed.png` }));
-        this.pecas.push(new Bispo({ ...redConfig, gridX: 5, gridY: 0, spriteSheet: `${path}/red/bispoRed.png` }));
-        this.pecas.push(new Cavalo({ ...redConfig, gridX: 6, gridY: 0, spriteSheet: `${path}/red/cavaloRed.png` }));
-        this.pecas.push(new Torre({ ...redConfig, gridX: 7, gridY: 0, spriteSheet: `${path}/red/torreRed.png` }));
+        this.pecas.push(new Torre({ ...rivalConfig, gridX: 0, gridY: 0, id: "T1_p2", spriteSheet: `${path}/red/torreRed.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 1, gridY: 0, id: "C1_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Bispo({ ...rivalConfig, gridX: 2, gridY: 0, id: "B1_p2", spriteSheet: `${path}/red/bispoRed.png` }));
+        this.pecas.push(new Rainha({ ...rivalConfig, gridX: 3, gridY: 0, id: "Ra1_p2", spriteSheet: `${path}/red/rainhaRed.png` }));
+        this.pecas.push(new Rei({ ...rivalConfig, gridX: 4, gridY: 0, id: "Re1_p2", spriteSheet: `${path}/red/reiRed.png` }));
+        this.pecas.push(new Bispo({ ...rivalConfig, gridX: 5, gridY: 0, id: "B2_p2", spriteSheet: `${path}/red/bispoRed.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 6, gridY: 0, id: "C2_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Torre({ ...rivalConfig, gridX: 7, gridY: 0, id: "T2_p2", spriteSheet: `${path}/red/torreRed.png` }));
 
         for (let i = 0; i < 8; i++) {
-            this.pecas.push(new Peao({ ...redConfig, gridX: i, gridY: 1, spriteSheet: `${path}/red/peaoRed.png` }));
+            var pecaId = "P" + (i+1) + "_p2";
+            this.pecas.push(new Peao({ ...rivalConfig, gridX: i, gridY: 1, id: pecaId, spriteSheet: `${path}/red/peaoRed.png` }));
         }
 
         // Time Azul (Traseira - y=7, Peões - y=6)
-        this.pecas.push(new Torre({ ...blueConfig, gridX: 0, gridY: 7, spriteSheet: `${path}/blue/torreBlue.png` }));
-        this.pecas.push(new Cavalo({ ...blueConfig, gridX: 1, gridY: 7, spriteSheet: `${path}/blue/cavaloBlue.png` }));
-        this.pecas.push(new Bispo({ ...blueConfig, gridX: 2, gridY: 7, spriteSheet: `${path}/blue/bispoBlue.png` }));
-        this.pecas.push(new Rainha({ ...blueConfig, gridX: 3, gridY: 7, spriteSheet: `${path}/blue/rainhaBlue.png` }));
-        this.pecas.push(new Rei({ ...blueConfig, gridX: 4, gridY: 7, spriteSheet: `${path}/blue/reiBlue.png` }));
-        this.pecas.push(new Bispo({ ...blueConfig, gridX: 5, gridY: 7, spriteSheet: `${path}/blue/bispoBlue.png` }));
-        this.pecas.push(new Cavalo({ ...blueConfig, gridX: 6, gridY: 7, spriteSheet: `${path}/blue/cavaloBlue.png` }));
-        this.pecas.push(new Torre({ ...blueConfig, gridX: 7, gridY: 7, spriteSheet: `${path}/blue/torreBlue.png` }));
+        this.pecas.push(new Torre({ ...playerConfig, gridX: 0, gridY: 7, id: "T1_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 1, gridY: 7, id: "C1_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Bispo({ ...playerConfig, gridX: 2, gridY: 7, id: "B1_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
+        this.pecas.push(new Rainha({ ...playerConfig, gridX: 3, gridY: 7, id: "Ra1_p1", spriteSheet: `${path}/blue/rainhaBlue.png` }));
+        this.pecas.push(new Rei({ ...playerConfig, gridX: 4, gridY: 7, id: "Re1_p1", spriteSheet: `${path}/blue/reiBlue.png` }));
+        this.pecas.push(new Bispo({ ...playerConfig, gridX: 5, gridY: 7, id: "B2_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 6, gridY: 7, id: "C2_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Torre({ ...playerConfig, gridX: 7, gridY: 7, id: "T2_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
 
         for (let i = 0; i < 8; i++) {
-            this.pecas.push(new Peao({ ...blueConfig, gridX: i, gridY: 6, spriteSheet: `${path}/blue/peaoBlue.png` }));
+            var pecaId = "P" + (i+1) + "_p1";
+            this.pecas.push(new Peao({ ...playerConfig, gridX: i, gridY: 6, id: pecaId, spriteSheet: `${path}/blue/peaoBlue.png` }));
+        }
+
+        console.log(`Tabuleiro inicializado com ${this.pecas.length} peças.`);
+    }
+
+    initializeBoardPlayer_2(){
+        const path = "./assets/spriteSheets";
+        const rivalConfig = { tiles: this, directionMoviment: "down", color: "blue", facing: "front" };
+        const playerConfig = { tiles: this, directionMoviment: "up", color: "red", facing: "back" };
+
+        // Time Azul (Traseira - y=0, Peões - y=1)
+        this.pecas.push(new Torre({ ...rivalConfig, gridX: 0, gridY: 0, id: "T2_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 1, gridY: 0, id: "C2_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Bispo({ ...rivalConfig, gridX: 2, gridY: 0, id: "B2_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
+        this.pecas.push(new Rainha({ ...rivalConfig, gridX: 4, gridY: 0, id: "Ra1_p1", spriteSheet: `${path}/blue/rainhaBlue.png` }));
+        this.pecas.push(new Rei({ ...rivalConfig, gridX: 3, gridY: 0, id: "Re1_p1", spriteSheet: `${path}/blue/reiBlue.png` }));
+        this.pecas.push(new Bispo({ ...rivalConfig, gridX: 5, gridY: 0, id: "B1_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 6, gridY: 0, id: "C1_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Torre({ ...rivalConfig, gridX: 7, gridY: 0, id: "T1_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
+
+        for (let i = 7; i >= 0; i--) {
+            var pecaId = "P" + (i+1) + "_p1";
+            this.pecas.push(new Peao({ ...rivalConfig, gridX: 7-i, gridY: 1, id: pecaId, spriteSheet: `${path}/blue/peaoBlue.png` }));
+        }
+
+        // Time Vermelho (Traseira - y=7, Peões - y=6)
+        this.pecas.push(new Torre({ ...playerConfig, gridX: 0, gridY: 7, id: "T2_p2", spriteSheet: `${path}/red/torreRed.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 1, gridY: 7, id: "C2_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Bispo({ ...playerConfig, gridX: 2, gridY: 7, id: "B2_p2", spriteSheet: `${path}/red/bispoRed.png` }));
+        this.pecas.push(new Rainha({ ...playerConfig, gridX: 4, gridY: 7, id: "Ra1_p2", spriteSheet: `${path}/red/rainhaRed.png` }));
+        this.pecas.push(new Rei({ ...playerConfig, gridX: 3, gridY: 7, id: "Re1_p2", spriteSheet: `${path}/red/reiRed.png` }));
+        this.pecas.push(new Bispo({ ...playerConfig, gridX: 5, gridY: 7, id: "B1_p2", spriteSheet: `${path}/red/bispoRed.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 6, gridY: 7, id: "C1_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Torre({ ...playerConfig, gridX: 7, gridY: 7, id: "T1_p2", spriteSheet: `${path}/red/torreRed.png` }));
+
+        for (let i = 7; i >= 0; i--) {
+            var pecaId = "P" + (i+1) + "_p2";
+            this.pecas.push(new Peao({ ...playerConfig, gridX: 7-i, gridY: 6, id: pecaId, spriteSheet: `${path}/red/peaoRed.png` }));
         }
 
         console.log(`Tabuleiro inicializado com ${this.pecas.length} peças.`);

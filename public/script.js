@@ -15,7 +15,8 @@ ws.onopen = () => {
             tipo: "pecaCapturada",
             pecaCapturadaX: e.detail.pecaCapturadaX,
             pecaCapturadaY: e.detail.pecaCapturadaY,
-            jogadorQueCapturou: e.detail.jogadorQueCapturou
+            jogadorQueCapturou: e.detail.jogadorQueCapturou,
+            id: e.detail.id
         }))
     });
 
@@ -26,7 +27,8 @@ ws.onopen = () => {
             antigoY: e.detail.antigoY,
             novoX: e.detail.novoX,
             novoY: e.detail.novoY,
-            jogador: e.detail.jogador
+            jogador: e.detail.jogador,
+            id: e.detail.id
         }))
     });
 

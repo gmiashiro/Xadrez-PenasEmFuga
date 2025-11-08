@@ -1,8 +1,8 @@
 class Tabuleiro {
     constructor(jogador) {
         this.jogador = jogador;
-        // 1 = Juninho Jr
-        // 2 = Pingo
+        // 2 = Juninho Jr
+        // 1 = Pingo
         this.tiles = null;
     }
 
@@ -36,13 +36,16 @@ class Tabuleiro {
         // msg contém: { antigoX, antigoY, novoX, novoY, ... }
         if (!this.tiles) return;
 
-        console.log(`Recebido movimento do oponente: ${msg.antigoX},${msg.antigoY} -> ${msg.novoX},${msg.novoY}`);
+        console.log(`Recebido movimento do oponente: ${msg.antigoX},${msg.antigoY} -> ${msg.novoX},${msg.novoY}, ${msg.id}`);
         
         // Encontra a peça do oponente na posição antiga
-        const peca = this.tiles.findPecaAt(msg.antigoX, msg.antigoY);
+        // const peca = this.tiles.findPecaAt(msg.antigoX, msg.antigoY);
+        const peca = this.tiles.findPecaId(msg.id);
+        console.log(msg.id);
+        console.log("teste")
         
         if (peca) {
-            peca.moveTo(msg.novoX, msg.novoY);
+            peca.moveTo(this.espelharMovimento(msg.novoX), this.espelharMovimento(msg.novoY));
         } else {
             console.log("Erro: Não encontrei a peça do oponente para mover.");
         }
@@ -55,12 +58,33 @@ class Tabuleiro {
         console.log(`Oponente capturou peça em: ${msg.pecaCapturadaX},${msg.pecaCapturadaY}`);
         
         // Encontra a peça (que é nossa) que foi capturada
-        const pecaCapturada = this.tiles.findPecaAt(msg.pecaCapturadaX, msg.pecaCapturadaY);
+        const pecaCapturada = this.tiles.findPecaId(msg.id);
         
         if (pecaCapturada) {
             this.tiles.capturePeca(pecaCapturada);
         } else {
             console.log("Erro: Não encontrei a peça que o oponente capturou.");
+        }
+    }
+
+    espelharMovimento(grid) {
+        switch (grid) {
+            case 0:
+                return 7;
+            case 1:
+                return 6;
+            case 2:
+                return 5;
+            case 3:
+                return 4;
+            case 4:
+                return 3;
+            case 5:
+                return 2;
+            case 6:
+                return 1;
+            case 7:
+                return 0;
         }
     }
 }
