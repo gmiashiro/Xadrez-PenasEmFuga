@@ -2,7 +2,8 @@ class GameManager {
     constructor() {
         this.quantJogadores = 0;
         this.tabuleiro;
-
+        this.soundtrack = new Soundtrack();
+        
     }
 
     startTabuleiro(jogador) {
@@ -12,6 +13,7 @@ class GameManager {
                 break;
             case 1:
                 console.log("Pingo entrou no jogo");
+                this.soundtrack.startSoundtrack();
                 break;
         }
         this.tabuleiro = new Tabuleiro(jogador);
