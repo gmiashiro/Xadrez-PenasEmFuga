@@ -56,6 +56,8 @@ class Tiles {
         } else {
             console.log(`Clicou na casa vazia em (${tileX}, ${tileY})`);
         }
+        //console.log(clickedPeca.facing)
+        
 
         // Já possui uma peça selecionada
         if (this.selectedPeca) {
@@ -138,9 +140,11 @@ class Tiles {
             }
         // Não possui peça selecionada
         } else {
-            if (clickedPeca) {
+            if (clickedPeca && clickedPeca.facing === "back") {
                 this.selectedPeca = clickedPeca;
                 console.log("Peça selecionada:", clickedPeca);
+            } else if (clickedPeca && clickedPeca.facing === "front") {
+                console.log("peça inimiga")
             }
             // se clicou em um tile vazio, não faz nada
         }
