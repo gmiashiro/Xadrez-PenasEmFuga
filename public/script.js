@@ -11,6 +11,7 @@ ws.onopen = () => {
 
     // Escutando acontecimentos do jogo e comunicando ao servidor sobre elas
     document.addEventListener("capturandoPeca", (e) => {
+        addPecaCapturadaScore(e.detail);
         ws.send(JSON.stringify({
             tipo: "pecaCapturada",
             pecaCapturadaX: e.detail.pecaCapturadaX,
@@ -41,6 +42,7 @@ ws.onmessage = (event) => {
     switch(msg.tipo) {
         case "novoJogador":
             // Inicia o tabuleiro quando o servidor atribui um ID de jogador
+            buildScore(msg.jogador);
             gameManager.startTabuleiro(msg.jogador);
             break;
         case "passouQuantidadeJogadores":
@@ -57,6 +59,7 @@ ws.onmessage = (event) => {
         case "oponenteCapturouPeca":
             // Passa a captura para o tabuleiro aplicar
             if (gameManager.tabuleiro) {
+                addPecaCapturadaScore(msg);
                 gameManager.tabuleiro.aplicarCapturaOponente(msg);
             }
             break;
@@ -67,6 +70,103 @@ ws.onmessage = (event) => {
         // --- FIM DOS NOVOS CASOS ---
     }
 };
+
+
+
+
+function buildScore(jogador) {
+    var scoreLeft = document.getElementById("scoreLeft");
+    var scoreRight = document.getElementById("scoreRight");
+    var imgDivLeft = document.createElement("div");
+    var imgDivRight = document.createElement("div");
+    imgDivLeft.classList.add("image");
+    imgDivRight.classList.add("image");
+    var boxDivRight = document.createElement("div");
+    var boxDivLeft = document.createElement("div");
+    boxDivLeft.classList.add("retangulo");
+    boxDivRight.classList.add("retangulo");
+
+    if (jogador == 1) {
+        // LADO ESQUERDO
+        imgDivLeft.classList.add("imageBlue");
+        imgDivLeft.classList.add("blue");
+        boxDivLeft.classList.add("blueB");
+        boxDivLeft.id = "blueB";
+        
+        // LADO DIREITO
+        imgDivRight.classList.add("imageRed");
+        imgDivRight.classList.add("red");
+        boxDivRight.classList.add("redB");
+        boxDivRight.id = "redB";
+    } else {
+        // LADO ESQUERDO
+        imgDivLeft.classList.add("imageRed");
+        imgDivLeft.classList.add("red");
+        boxDivLeft.classList.add("redB");
+        boxDivLeft.id = "redB";
+        
+        // LADO DIREITO
+        imgDivRight.classList.add("imageBlue");
+        imgDivRight.classList.add("blue");
+        boxDivRight.classList.add("blueB");
+        boxDivRight.id = "blueB";
+    }
+
+    scoreLeft.appendChild(boxDivLeft);
+    scoreLeft.appendChild(imgDivLeft);
+    scoreRight.appendChild(imgDivRight);
+    scoreRight.appendChild(boxDivRight);
+}
+
+function addPecaCapturadaScore(msg) {
+    if (msg.jogadorQueCapturou == 1) {
+        // Está jogando com as peças azuis
+
+        var score = document.getElementById("blueB");
+        if (msg.id.includes("P")) {
+            var peaoRImg = "<img src='./assets/hud/images/icons/pawnRed.png'>";
+            score.innerHTML += peaoRImg;
+        } else if (msg.id.includes("T")) {
+            var torreRImg = "<img src='./assets/hud/images/icons/towerRed.png'>";
+            score.innerHTML += torreRImg;
+        } else if (msg.id.includes("B")) {
+            var bispoRImg = "<img src='./assets/hud/images/icons/bishopRed.png'>";
+            score.innerHTML += bispoRImg;
+        } else if (msg.id.includes("C")) {
+            var cavaloRImg = "<img src='./assets/hud/images/icons/horseRed.png'>";
+            score.innerHTML += cavaloRImg;
+        } else if (msg.id.includes("Re")) {
+            var reiRImg = "<img src='./assets/hud/images/redImage.png'>";
+            score.innerHTML += reiRImg;
+        } else if (msg.id.includes("Ra")) {
+            var rainhaRImg = "<img src='./assets/hud/images/icons/queenRed.png'>";
+            score.innerHTML += rainhaRImg;
+        }
+    } else {
+        var score = document.getElementById("redB");
+        if (msg.id.includes("P")) {
+            var peaoBImg = "<img src='./assets/hud/images/icons/pawnBlue.png'>";
+            score.innerHTML += peaoBImg;
+        } else if (msg.id.includes("T")) {
+            var torreBImg = "<img src='./assets/hud/images/icons/towerBlue.png'>";
+            score.innerHTML += torreBImg;
+        } else if (msg.id.includes("B")) {
+            var bispoBImg = "<img src='./assets/hud/images/icons/bishopBlue.png'>";
+            score.innerHTML += bispoBImg;
+        } else if (msg.id.includes("C")) {
+            var cavaloBImg = "<img src='./assets/hud/images/icons/horseBlue.png'>";
+            score.innerHTML += cavaloBImg;
+        } else if (msg.id.includes("Re")) {
+            var reiBImg = "<img src='./assets/hud/images/blueImage.png'>";
+            score.innerHTML += reiBImg;
+        } else if (msg.id.includes("Ra")) {
+            var rainhaBImg = "<img src='./assets/hud/images/icons/queenBlue.png'>";
+            score.innerHTML += rainhaBImg;
+        }
+    }
+
+}
+
 
 // A música e o som começam ligadas
 var sound = true;
