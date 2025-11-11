@@ -14,6 +14,7 @@ class Peao extends Peca {
     canBeMoved(futureGridX, futureGridY) {
         if (this.isCaptureActive == true) {
             // Se for um movimento de captura, o peão anda na diagonal
+            this.isCaptureActive = false;
             if (this.belongsToDiagonal(futureGridX, futureGridY) && futureGridY == this.gridY-1) {
                 return true;
             } else {
