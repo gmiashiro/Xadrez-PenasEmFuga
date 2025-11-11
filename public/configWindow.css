@@ -1,7 +1,9 @@
 .confi-button-container {
     align-self: flex-start;
+    position: absolute;
+
     margin-top: 18px;
-    margin-left: 0px;
+    margin-left: 1275px;
     background-repeat: no-repeat;
     margin-right: 0px;
 }

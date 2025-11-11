@@ -4,16 +4,14 @@ class Tiles {
         this.ctx = ctx;
 
         this.BOARD_SIZE = 512; // tamanho total do tabuleiro em pixels
-        this.GRID_OFFSET = 16; // tamanho da borda ao redor do tabuleiro
-        const gridAreaSize = this.BOARD_SIZE - (2 * this.GRID_OFFSET);
-        this.TILE_SIZE = gridAreaSize / 8;
+        this.TILE_SIZE = this.BOARD_SIZE / 8;
 
         this.selectedPeca = null;
 
         this.pecas = [];
 
         this.boardImage = new Image();
-        this.boardImage.src = "./assets/hud/background/xadrezFundo.png";
+        this.boardImage.src = "./assets/hud/background/xadrezFundo3.png";
 
         this.boardImage.onload = () => {
 
@@ -34,11 +32,11 @@ class Tiles {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.drawImage(this.boardImage, 0, 0, this.canvas.width, this.canvas.height);
+        //this.ctx.drawImage(this.boardImage, 0, 0, this.canvas.width, this.canvas.height);
 
         if(this.selectedPeca) {
-            const pixelX = (this.selectedPeca.gridX * this.TILE_SIZE) + this.GRID_OFFSET;
-            const pixelY = (this.selectedPeca.gridY * this.TILE_SIZE) + this.GRID_OFFSET;
+            const pixelX = (this.selectedPeca.gridX * this.TILE_SIZE)
+            const pixelY = (this.selectedPeca.gridY * this.TILE_SIZE)
             this.ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             this.ctx.fillRect(pixelX, pixelY, this.TILE_SIZE, this.TILE_SIZE);
         }
@@ -152,8 +150,8 @@ class Tiles {
     }
 
     getTileCoordsFromPixels(pixelX, pixelY) {
-        const relativeX = pixelX - this.GRID_OFFSET;
-        const relativeY = pixelY - this.GRID_OFFSET;
+        const relativeX = pixelX;
+        const relativeY = pixelY;
 
         const tileX = Math.floor(relativeX / this.TILE_SIZE);
         const tileY = Math.floor(relativeY / this.TILE_SIZE); 

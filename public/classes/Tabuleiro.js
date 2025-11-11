@@ -12,6 +12,7 @@ class Tabuleiro {
         // 1. Cria uma instância do nosso gerenciador de tabuleiro
         const canvas = document.querySelector(".game-canvas");
         const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
         //const tiles = new Tiles(canvas, ctx, this.jogador);
         this.tiles = new Tiles(canvas, ctx, this.jogador);
 
