@@ -18,8 +18,8 @@ class Peca extends Sprite {
     }
 
     recalculatePixelPosition(){
-        this.pixelX = (this.gridX * this.tiles.TILE_SIZE) + this.tiles.GRID_OFFSET;
-        this.pixelY = (this.gridY * this.tiles.TILE_SIZE) + this.tiles.GRID_OFFSET;
+        this.pixelX = (this.gridX * this.tiles.TILE_SIZE);
+        this.pixelY = (this.gridY * this.tiles.TILE_SIZE);
     }
 
     moveTo(gridX, gridY){

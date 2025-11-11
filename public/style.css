@@ -16,11 +16,11 @@ body {
 }
 
 .game-container {
-    background-image: url("./assets/hud/background/xadrezFundo.png");
+    background-image: url("./assets/hud/background/xadrezFundo3.png");
     background-repeat: no-repeat;
     background-size: auto;
-    width: 512px;
-    height: 512px;
+    width: 544px;
+    height: 544px;
     margin: 0;
     image-rendering: pixelated;
 }
@@ -29,7 +29,7 @@ body {
     width: 512px;
     height: 512px;
     image-rendering: pixelated;
-    image-rendering:crisp-edges;
+    margin: 16px;
 }
 
 .pecas-capturadas {
@@ -41,12 +41,12 @@ body {
 
 .left {
     margin-right: 100px;
-    margin-left: 120px;
+    margin-left: 40px;
 }
 
 .right {
     margin-left: 100px;
-    margin-right: 85px;
+    margin-right: 40px;
 }
 
 .image {
