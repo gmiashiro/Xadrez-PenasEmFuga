@@ -44,6 +44,7 @@ ws.onmessage = (event) => {
             // Inicia o tabuleiro quando o servidor atribui um ID de jogador
             buildScore(msg.jogador);
             gameManager.startTabuleiro(msg.jogador);
+            gameManager.tabuleiro.atualizarTurno(msg.jogador === msg.turno);
             break;
         case "passouQuantidadeJogadores":
             alert("O jogo já está cheio. Tente mais tarde.");
@@ -61,6 +62,12 @@ ws.onmessage = (event) => {
             if (gameManager.tabuleiro) {
                 addPecaCapturadaScore(msg);
                 gameManager.tabuleiro.aplicarCapturaOponente(msg);
+            }
+            break;
+        case "atualizarTurno":
+            if (gameManager.tabuleiro) {
+                // Atualiza o estado do turno (true se msg.turno == this.jogador)
+                gameManager.tabuleiro.atualizarTurno(gameManager.tabuleiro.jogador === msg.turno);
             }
             break;
         case "oponenteDesconectou":

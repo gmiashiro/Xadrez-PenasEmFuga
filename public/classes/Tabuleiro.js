@@ -68,6 +68,18 @@ class Tabuleiro {
         }
     }
 
+    atualizarTurno(eMeuTurno) {
+        if (this.tiles) {
+            this.tiles.meuTurno = eMeuTurno;
+            // Log para depuração
+            if (eMeuTurno) {
+                console.log("É o meu turno!");
+            } else {
+                console.log("Aguardando o oponente...");
+            }
+        }
+    }
+
     espelharMovimento(grid) {
         switch (grid) {
             case 0:

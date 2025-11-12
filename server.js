@@ -52,6 +52,8 @@ const wss = new WebSocket.Server({ server });
 let jogador1 = null;
 let jogador2 = null;
 
+let turnoAtual = 1;
+
 // Lista de conexões
 wss.on("connection", (ws) => {
     console.log("Novo cliente conectado servidor!");
@@ -61,7 +63,8 @@ wss.on("connection", (ws) => {
         console.log("Jogador 1 conectado.");
         ws.send(JSON.stringify({
             tipo: "novoJogador",
-            jogador: 1
+            jogador: 1,
+            turno: turnoAtual
         }));
     } else if (jogador2 === null) {
         jogador2 = ws;
@@ -69,7 +72,8 @@ wss.on("connection", (ws) => {
         console.log("Jogador 2 conectado.");
         ws.send(JSON.stringify({
             tipo: "novoJogador",
-            jogador: 2
+            jogador: 2,
+            turno: turnoAtual
         }));
     } else {
         // Jogo cheio
@@ -107,6 +111,26 @@ wss.on("connection", (ws) => {
             destinatario.send(JSON.stringify(msgParaOponente));
         }
 
+        if (msgCliente.tipo === "pecaMovida") {
+            // 1. Inverte o turno
+            turnoAtual = (turnoAtual === 1) ? 2 : 1;
+            console.log("Turno atualizado para:", turnoAtual);
+
+            // 2. Cria a mensagem de atualização de turno
+            const msgTurno = JSON.stringify({
+                tipo: "atualizarTurno",
+                turno: turnoAtual
+            });
+
+            // 3. Envia a atualização para AMBOS os jogadores
+            if (jogador1 && jogador1.readyState === WebSocket.OPEN) {
+                jogador1.send(msgTurno);
+            }
+            if (jogador2 && jogador2.readyState === WebSocket.OPEN) {
+                jogador2.send(msgTurno);
+            }
+        }
+
         // Log no servidor (como antes)
         if (msgCliente.tipo === "pecaMovida") {
             console.log(`Jogador ${remetenteId} moveu ${msgCliente.antigoX},${msgCliente.antigoY} para ${msgCliente.novoX},${msgCliente.novoY}, ${msgCliente.id}`);
@@ -129,6 +153,11 @@ wss.on("connection", (ws) => {
             jogador2 = null; // Libera o slot
             oponente = jogador1;
             console.log("Jogador 2 desconectado.");
+        }
+
+        // Reseta o turno se o jogo esvaziar ou ambos saírem
+        if (jogador1 === null && jogador2 === null) {
+            turnoAtual = 1; // Reseta para o Jogador 1
         }
 
         // Avisa o oponente que o outro jogador saiu

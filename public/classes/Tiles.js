@@ -7,6 +7,7 @@ class Tiles {
         this.TILE_SIZE = this.BOARD_SIZE / 8;
 
         this.selectedPeca = null;
+        this.meuTurno = false;
 
         this.pecas = [];
 
@@ -45,6 +46,11 @@ class Tiles {
     }
 
     handleGridClick(tileX, tileY) {
+
+        if (!this.meuTurno) {
+            console.log("Não é o seu turno!");
+            return;
+        }
         
         // descobre qual peça (se houver) está na posição clicada
         const clickedPeca = this.findPecaAt(tileX, tileY);
