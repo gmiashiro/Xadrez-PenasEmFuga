@@ -33,7 +33,17 @@ ws.onopen = () => {
         }))
     });
 
-    
+    document.addEventListener("reiCapturado", (e) => {
+        // 1. Mostra a janela de "Game Over"
+        openGameOverWindow(e.detail.winnerColor, e.detail.winnerPlayer);
+        
+        // 2. Avisa o servidor que o jogo terminou
+        ws.send(JSON.stringify({
+            tipo: "jogoTerminou",
+            winnerColor: e.detail.winnerColor,
+            winnerPlayer: e.detail.winnerPlayer
+        }));
+    });
 };
 
 ws.onmessage = (event) => {
@@ -73,6 +83,16 @@ ws.onmessage = (event) => {
         case "oponenteDesconectou":
             alert("Seu oponente desconectou. Atualize a página para encontrar um novo jogo.");
             // (Aqui você pode adicionar uma lógica para resetar o jogo)
+            break;
+        // O servidor está nos dizendo que o oponente venceu
+        case "jogoTerminouOponente":
+            openGameOverWindow(msg.winnerColor, msg.winnerPlayer);
+            break;
+
+        // O servidor confirmou que ambos os jogadores querem recomeçar
+        case "recomecarJogo":
+            // A forma mais fácil e segura de resetar o jogo é recarregar a página
+            location.reload();
             break;
         // --- FIM DOS NOVOS CASOS ---
     }
@@ -295,4 +315,56 @@ function openEvolucaoPeaoWindow() {
     })
 }
 
-console.log("Script carregado");
+function openGameOverWindow(winnerColor, winnerPlayer) {
+    // Para o jogo (impede cliques futuros)
+    if (gameManager.tabuleiro && gameManager.tabuleiro.tiles) {
+        gameManager.tabuleiro.tiles.meuTurno = false;
+    }
+
+    // Cria a camada escura
+    const camadaEscura = document.createElement("div");
+    camadaEscura.classList.add("escurecer"); // Estilo do style.css
+    
+    // Cria a janela
+    const gameOverWindow = document.createElement("div");
+    gameOverWindow.id = "gameOver-window";
+
+    const title = document.createElement("h2");
+    const subTitle = document.createElement("p");
+    
+    // Verifica se o jogador local é o vencedor
+    if (gameManager.tabuleiro.jogador === winnerPlayer) {
+        title.innerText = "Você Venceu!";
+        subTitle.innerText = "Parabéns!";
+    } else {
+        title.innerText = "Você Perdeu!";
+        subTitle.innerText = "Mais sorte na próxima!";
+    }
+
+    // Adiciona a classe de cor (blue/red) para o título
+    gameOverWindow.classList.add(winnerColor === "blue" ? "vitoria-blue" : "vitoria-red");
+
+    // Cria o botão de recomeçar
+    const restartButton = document.createElement("button");
+    restartButton.classList.add("restart-button");
+    restartButton.innerText = "Recomeçar";
+
+    // Ação de clique do botão
+    restartButton.onclick = () => {
+        // Envia o "voto" de recomeçar para o servidor
+        ws.send(JSON.stringify({ tipo: "querRecomecar" }));
+        
+        // Desabilita o botão e muda o texto
+        restartButton.innerText = "Aguardando Oponente...";
+        restartButton.disabled = true;
+    };
+
+    // Monta a janela
+    gameOverWindow.appendChild(title);
+    gameOverWindow.appendChild(subTitle);
+    gameOverWindow.appendChild(restartButton);
+
+    const body = document.getElementById("body");
+    body.appendChild(camadaEscura);
+    body.appendChild(gameOverWindow);
+}

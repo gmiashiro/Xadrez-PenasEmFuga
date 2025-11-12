@@ -51,8 +51,11 @@ const wss = new WebSocket.Server({ server });
 
 let jogador1 = null;
 let jogador2 = null;
-
 let turnoAtual = 1;
+
+let jogoEmAndamento = true;
+let jogador1QuerRecomecar = false;
+let jogador2QuerRecomecar = false;
 
 // Lista de conexões
 wss.on("connection", (ws) => {
@@ -60,6 +63,9 @@ wss.on("connection", (ws) => {
     if (jogador1 === null) {
         jogador1 = ws;
         ws.jogadorId = 1;
+        jogoEmAndamento = true;
+        jogador1QuerRecomecar = false;
+        jogador2QuerRecomecar = false;
         console.log("Jogador 1 conectado.");
         ws.send(JSON.stringify({
             tipo: "novoJogador",
@@ -69,6 +75,9 @@ wss.on("connection", (ws) => {
     } else if (jogador2 === null) {
         jogador2 = ws;
         ws.jogadorId = 2;
+        jogoEmAndamento = true;
+        jogador1QuerRecomecar = false;
+        jogador2QuerRecomecar = false;
         console.log("Jogador 2 conectado.");
         ws.send(JSON.stringify({
             tipo: "novoJogador",
@@ -89,6 +98,10 @@ wss.on("connection", (ws) => {
         const msgCliente = JSON.parse(message.toString());
         const remetenteId = ws.jogadorId;
 
+        if (!jogoEmAndamento && msgCliente.tipo !== "querRecomecar") {
+            return; // Ignora movimentos de peças, etc.
+        }
+
         // Encontra o destinatário
         let destinatario = null;
         if (remetenteId === 1 && jogador2) {
@@ -97,38 +110,68 @@ wss.on("connection", (ws) => {
             destinatario = jogador1;
         }
 
-        // Se houver um destinatário e ele estiver online, envie a mensagem
-        if (destinatario && destinatario.readyState === WebSocket.OPEN) {
-            // Criamos novos tipos de mensagem para o oponente
-            let msgParaOponente = { ...msgCliente }; // Copia a mensagem
+        switch(msgCliente.tipo) {
+            
+            // Caso: Jogador moveu uma peça
+            case "pecaMovida":
+                // 1. Atualiza o turno
+                turnoAtual = (turnoAtual === 1) ? 2 : 1;
+                const msgTurno = JSON.stringify({ tipo: "atualizarTurno", turno: turnoAtual });
+                if (jogador1) jogador1.send(msgTurno);
+                if (jogador2) jogador2.send(msgTurno);
 
-            if (msgCliente.tipo === "pecaMovida") {
-                msgParaOponente.tipo = "oponenteMoveuPeca";
-            } else if (msgCliente.tipo === "pecaCapturada") {
-                msgParaOponente.tipo = "oponenteCapturouPeca";
-            }
+                // 2. Retransmite o movimento (traduzido)
+                if (destinatario) {
+                    let msgMovimento = { ...msgCliente, tipo: "oponenteMoveuPeca" };
+                    destinatario.send(JSON.stringify(msgMovimento));
+                }
+                console.log(`Jogador ${remetenteId} moveu...`);
+                break;
 
-            destinatario.send(JSON.stringify(msgParaOponente));
-        }
+            // Caso: Jogador capturou uma peça
+            case "pecaCapturada":
+                // Apenas retransmite (traduzido)
+                if (destinatario) {
+                    let msgCaptura = { ...msgCliente, tipo: "oponenteCapturouPeca" };
+                    destinatario.send(JSON.stringify(msgCaptura));
+                }
+                console.log(`Jogador ${remetenteId} capturou...`);
+                break;
 
-        if (msgCliente.tipo === "pecaMovida") {
-            // 1. Inverte o turno
-            turnoAtual = (turnoAtual === 1) ? 2 : 1;
-            console.log("Turno atualizado para:", turnoAtual);
+            // Caso: Jogo terminou (Rei capturado)
+            case "jogoTerminou":
+                console.log(`Jogo terminou. Vencedor: Jogador ${msgCliente.winnerPlayer}`);
+                jogoEmAndamento = false;
+                // Avisa o outro jogador (o perdedor)
+                if (destinatario) {
+                    destinatario.send(JSON.stringify({
+                        tipo: "jogoTerminouOponente",
+                        ...msgCliente
+                    }));
+                }
+                break;
+            
+            // Caso: Um jogador quer recomeçar
+            case "querRecomecar":
+                console.log(`Jogador ${remetenteId} quer recomeçar.`);
+                if (remetenteId === 1) jogador1QuerRecomecar = true;
+                if (remetenteId === 2) jogador2QuerRecomecar = true;
 
-            // 2. Cria a mensagem de atualização de turno
-            const msgTurno = JSON.stringify({
-                tipo: "atualizarTurno",
-                turno: turnoAtual
-            });
+                // Verifica se AMBOS querem recomeçar
+                if (jogador1QuerRecomecar && jogador2QuerRecomecar) {
+                    console.log("Ambos os jogadores concordaram. Reiniciando...");
+                    // 1. Envia a ordem de recomeçar
+                    const msgRestart = JSON.stringify({ tipo: "recomecarJogo" });
+                    if (jogador1) jogador1.send(msgRestart);
+                    if (jogador2) jogador2.send(msgRestart);
 
-            // 3. Envia a atualização para AMBOS os jogadores
-            if (jogador1 && jogador1.readyState === WebSocket.OPEN) {
-                jogador1.send(msgTurno);
-            }
-            if (jogador2 && jogador2.readyState === WebSocket.OPEN) {
-                jogador2.send(msgTurno);
-            }
+                    // 2. Reseta o estado do servidor
+                    jogador1QuerRecomecar = false;
+                    jogador2QuerRecomecar = false;
+                    jogoEmAndamento = true;
+                    turnoAtual = 1;
+                }
+                break;
         }
 
         // Log no servidor (como antes)

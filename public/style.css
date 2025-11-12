@@ -110,3 +110,62 @@ body {
     background-color: rgba(0, 0, 0, 0.65);
 }
 
+#gameOver-window {
+    position: absolute;
+    z-index: 3;
+    width: 350px;
+    height: 250px;
+    background-color: #F4E8D8;
+    border: solid 4px #000;
+    border-radius: 12px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-family: 'Acme', sans-serif;
+}
+
+#gameOver-window h2 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #333;
+}
+
+/* Cor do título baseada no vencedor */
+#gameOver-window.vitoria-blue h2 {
+    color: #206AD8;
+}
+#gameOver-window.vitoria-red h2 {
+    color: #BD3120;
+}
+
+#gameOver-window p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.restart-button {
+    font-family: 'Acme', sans-serif;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 2px solid #555;
+    background-color: #FFF;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.restart-button:hover {
+    background-color: #666;
+    color: #FFF;
+}
+
+.restart-button:disabled {
+    background-color: #CCC;
+    color: #888;
+    cursor: not-allowed;
+}
