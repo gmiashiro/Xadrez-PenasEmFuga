@@ -8,7 +8,7 @@ class Tiles {
 
         this.selectedPeca = null;
         this.meuTurno = false;
-
+        this.possibleMoves = [];
         this.pecas = [];
 
         this.boardImage = new Image();
@@ -42,6 +42,19 @@ class Tiles {
             this.ctx.fillRect(pixelX, pixelY, this.TILE_SIZE, this.TILE_SIZE);
         }
 
+        this.ctx.fillStyle = "rgba(255, 255, 0, 0.35)"; // Amarelo 
+        
+        this.possibleMoves.forEach(move => {
+            // Calcula o centro do tile
+            const pixelX = (move.x * this.TILE_SIZE) + (this.TILE_SIZE / 2);
+            const pixelY = (move.y * this.TILE_SIZE) + (this.TILE_SIZE / 2);
+            const radius = this.TILE_SIZE / 4; // Raio do círculo
+
+            this.ctx.beginPath();
+            this.ctx.arc(pixelX, pixelY, radius, 0, 2 * Math.PI, false);
+            this.ctx.fill();
+        });
+
         this.pecas.forEach(peca => peca.draw(this.ctx));
     }
 
@@ -68,10 +81,12 @@ class Tiles {
             // se clicar no mesmo tile da peça selecionada, desseleciona
             if (clickedPeca === this.selectedPeca){
                 this.selectedPeca = null;
+                this.possibleMoves = [];
                 console.log("Peça desselecionada.");
             // se clicar em tile com uma peça amiga
             } else if (clickedPeca && clickedPeca.color === this.selectedPeca.color) {
                 this.selectedPeca = clickedPeca;
+                this.possibleMoves = this.selectedPeca.getPossibleMoves();
                 console.log("selecao trocada para peça amiga");
             // Se clicar em tile vazio (movimento)
             } else if (!clickedPeca && this.selectedPeca.canBeMoved(tileX, tileY)) {
@@ -98,6 +113,7 @@ class Tiles {
                 }
                 console.log(this.selectedPeca.id);
                 this.selectedPeca = null;
+                this.possibleMoves = [];
             // se clicar em um tile da peça inimiga (captura)
             } else if (clickedPeca && clickedPeca.color !== this.selectedPeca.color) {
                 var isCapture = new CustomEvent("isCapture");
@@ -141,12 +157,14 @@ class Tiles {
                     }
                     
                     this.selectedPeca = null;
+                    this.possibleMoves = [];
                 }
             }
         // Não possui peça selecionada
         } else {
             if (clickedPeca && clickedPeca.facing === "back") {
                 this.selectedPeca = clickedPeca;
+                this.possibleMoves = this.selectedPeca.getPossibleMoves();
                 console.log("Peça selecionada:", clickedPeca);
             } else if (clickedPeca && clickedPeca.facing === "front") {
                 console.log("peça inimiga")

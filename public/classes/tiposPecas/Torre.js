@@ -38,4 +38,9 @@ class Torre extends Peca {
         // console.table(possibleMoves);
     }
 
+    getPossibleMoves() {
+        // Usa o método genérico da classe Peca
+        return super.getPossibleMoves();
+    }
+
 }

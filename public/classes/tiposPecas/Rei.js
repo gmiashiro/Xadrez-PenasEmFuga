@@ -13,4 +13,9 @@ class Rei extends Peca {
         
     }
 
+    getPossibleMoves() {
+        // Usa o método genérico da classe Peca
+        return super.getPossibleMoves();
+    }
+
 }

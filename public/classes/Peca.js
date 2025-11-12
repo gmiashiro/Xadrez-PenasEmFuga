@@ -137,6 +137,34 @@ class Peca extends Sprite {
         
     }
 
+    getPossibleMoves() {
+        let possibleMoves = [];
+
+        // Varre cada quadrado do tabuleiro
+        for (let x = 0; x <= 7; x++) {
+            for (let y = 0; y <= 7; y++) {
+                
+                // 1. Verifica se a peça PODE se mover para lá (regras + obstrução)
+                // Usamos o 'canBeMoved' que já escrevemos!
+                if (this.canBeMoved(x, y)) {
+                    
+                    // 2. Verifica se há uma peça no destino
+                    const pecaNoDestino = this.tiles.findPecaAt(x, y);
+
+                    // 3. NÃO pode mover se for uma peça aliada
+                    if (pecaNoDestino && pecaNoDestino.color === this.color) {
+                        // É uma peça amiga, não é um movimento válido
+                        continue;
+                    }
+                    
+                    // Se passou em tudo, é um movimento legal
+                    possibleMoves.push({ x: x, y: y });
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
     draw(ctx){
 
         if(!this.isLoaded) return;
