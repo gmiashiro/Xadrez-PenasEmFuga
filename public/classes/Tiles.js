@@ -139,6 +139,15 @@ class Tiles {
 
                     this.selectedPeca.moveTo(tileX, tileY);
 
+                    if (clickedPeca.id.includes("Re")) {
+                        document.dispatchEvent(new CustomEvent("reiCapturado", {
+                            detail: {
+                                winnerColor: this.selectedPeca.color,
+                                winnerPlayer: this.jogador
+                            }
+                        }));
+                    }
+
                     var pecaMovida = new CustomEvent("pecaMovida", {
                         detail: {
                             antigoX: antigoX,
@@ -155,15 +164,6 @@ class Tiles {
                         if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
                             this.selectedPeca.evolucao();
                         } 
-                    }
-
-                    if (clickedPeca.id.includes("Re")) {
-                        document.dispatchEvent(new CustomEvent("reiCapturado", {
-                            detail: {
-                                winnerColor: this.selectedPeca.color,
-                                winnerPlayer: this.jogador
-                            }
-                        }));
                     }
                     
                     this.selectedPeca = null;

@@ -36,7 +36,7 @@ ws.onopen = () => {
     document.addEventListener("reiCapturado", (e) => {
         // 1. Mostra a janela de "Game Over"
         openGameOverWindow(e.detail.winnerColor, e.detail.winnerPlayer);
-        
+
         // 2. Avisa o servidor que o jogo terminou
         ws.send(JSON.stringify({
             tipo: "jogoTerminou",
@@ -48,10 +48,13 @@ ws.onopen = () => {
 
 ws.onmessage = (event) => {
     const msg = JSON.parse(event.data);
-    
-    switch(msg.tipo) {
+
+    console.log("[LOG CLIENTE] Recebeu mensagem do servidor:", msg.tipo, msg);
+
+    switch (msg.tipo) {
         case "novoJogador":
             // Inicia o tabuleiro quando o servidor atribui um ID de jogador
+            window.playerId = msg.jogador;
             buildScore(msg.jogador);
             gameManager.startTabuleiro(msg.jogador);
             gameManager.tabuleiro.atualizarTurno(msg.jogador === msg.turno);
@@ -59,7 +62,7 @@ ws.onmessage = (event) => {
         case "passouQuantidadeJogadores":
             alert("O jogo já está cheio. Tente mais tarde.");
             break;
-        
+
         // --- NOVOS CASOS ---
         case "oponenteMoveuPeca":
             // Passa a jogada para o tabuleiro aplicar
@@ -86,7 +89,14 @@ ws.onmessage = (event) => {
             break;
         // O servidor está nos dizendo que o oponente venceu
         case "jogoTerminouOponente":
-            openGameOverWindow(msg.winnerColor, msg.winnerPlayer);
+            // --- LOG ESPECIAL ---
+            console.log("[LOG CLIENTE] Processando 'jogoTerminouOponente'!");
+            if (gameManager?.tabuleiro || window.playerId) {
+                openGameOverWindow(msg.winnerColor, msg.winnerPlayer);
+            } else {
+                console.warn("Tabuleiro não inicializado — adiando exibição do Game Over.");
+                setTimeout(() => openGameOverWindow(msg.winnerColor, msg.winnerPlayer), 500);
+            }
             break;
 
         // O servidor confirmou que ambos os jogadores querem recomeçar
@@ -119,7 +129,7 @@ function buildScore(jogador) {
         imgDivLeft.classList.add("blue");
         boxDivLeft.classList.add("blueB");
         boxDivLeft.id = "blueB";
-        
+
         // LADO DIREITO
         imgDivRight.classList.add("imageRed");
         imgDivRight.classList.add("red");
@@ -131,7 +141,7 @@ function buildScore(jogador) {
         imgDivLeft.classList.add("red");
         boxDivLeft.classList.add("redB");
         boxDivLeft.id = "redB";
-        
+
         // LADO DIREITO
         imgDivRight.classList.add("imageBlue");
         imgDivRight.classList.add("blue");
@@ -305,7 +315,7 @@ function openEvolucaoPeaoWindow() {
     console.log("veio no script")
 
     buttons.forEach(button => {
-        button.onclick = () => { 
+        button.onclick = () => {
             setTimeout(() => {
                 console.log("ue")
                 evolucaoWindow.remove();
@@ -324,16 +334,18 @@ function openGameOverWindow(winnerColor, winnerPlayer) {
     // Cria a camada escura
     const camadaEscura = document.createElement("div");
     camadaEscura.classList.add("escurecer"); // Estilo do style.css
-    
+
     // Cria a janela
     const gameOverWindow = document.createElement("div");
     gameOverWindow.id = "gameOver-window";
 
     const title = document.createElement("h2");
     const subTitle = document.createElement("p");
-    
+
     // Verifica se o jogador local é o vencedor
-    if (gameManager.tabuleiro.jogador === winnerPlayer) {
+    const localPlayer = window.playerId || (gameManager.tabuleiro ? gameManager.tabuleiro.jogador : null);
+
+    if (localPlayer === winnerPlayer) {
         title.innerText = "Você Venceu!";
         subTitle.innerText = "Parabéns!";
     } else {
@@ -353,7 +365,7 @@ function openGameOverWindow(winnerColor, winnerPlayer) {
     restartButton.onclick = () => {
         // Envia o "voto" de recomeçar para o servidor
         ws.send(JSON.stringify({ tipo: "querRecomecar" }));
-        
+
         // Desabilita o botão e muda o texto
         restartButton.innerText = "Aguardando Oponente...";
         restartButton.disabled = true;

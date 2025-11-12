@@ -110,19 +110,25 @@ wss.on("connection", (ws) => {
             destinatario = jogador1;
         }
 
-        switch(msgCliente.tipo) {
-            
+        switch (msgCliente.tipo) {
+
             // Caso: Jogador moveu uma peça
             case "pecaMovida":
                 // 1. Atualiza o turno
-                turnoAtual = (turnoAtual === 1) ? 2 : 1;
-                const msgTurno = JSON.stringify({ tipo: "atualizarTurno", turno: turnoAtual });
-                if (jogador1) jogador1.send(msgTurno);
-                if (jogador2) jogador2.send(msgTurno);
+
+                if (jogoEmAndamento) {
+                    turnoAtual = (turnoAtual === 1) ? 2 : 1;
+                    const msgTurno = JSON.stringify({ tipo: "atualizarTurno", turno: turnoAtual });
+                    if (jogador1) jogador1.send(msgTurno);
+                    if (jogador2) jogador2.send(msgTurno);
+                }
+
 
                 // 2. Retransmite o movimento (traduzido)
                 if (destinatario) {
                     let msgMovimento = { ...msgCliente, tipo: "oponenteMoveuPeca" };
+                    // --- LOG ---
+                    console.log(`[LOG SERVIDOR] Enviando "oponenteMoveuPeca" para Jogador ${destinatario.jogadorId}`);
                     destinatario.send(JSON.stringify(msgMovimento));
                 }
                 console.log(`Jogador ${remetenteId} moveu...`);
@@ -133,6 +139,8 @@ wss.on("connection", (ws) => {
                 // Apenas retransmite (traduzido)
                 if (destinatario) {
                     let msgCaptura = { ...msgCliente, tipo: "oponenteCapturouPeca" };
+                    // --- LOG ---
+                    console.log(`[LOG SERVIDOR] Enviando "oponenteCapturouPeca" para Jogador ${destinatario.jogadorId}`);
                     destinatario.send(JSON.stringify(msgCaptura));
                 }
                 console.log(`Jogador ${remetenteId} capturou...`);
@@ -144,13 +152,17 @@ wss.on("connection", (ws) => {
                 jogoEmAndamento = false;
                 // Avisa o outro jogador (o perdedor)
                 if (destinatario) {
-                    destinatario.send(JSON.stringify({
+                    const msgParaPerdedor = {
                         tipo: "jogoTerminouOponente",
-                        ...msgCliente
-                    }));
+                        winnerColor: msgCliente.winnerColor,
+                        winnerPlayer: msgCliente.winnerPlayer
+                    };
+
+                    console.log(`[LOG SERVIDOR] Enviando "jogoTerminouOponente" para Jogador ${destinatario.jogadorId}`);
+                    destinatario.send(JSON.stringify(msgParaPerdedor));
                 }
                 break;
-            
+
             // Caso: Um jogador quer recomeçar
             case "querRecomecar":
                 console.log(`Jogador ${remetenteId} quer recomeçar.`);
