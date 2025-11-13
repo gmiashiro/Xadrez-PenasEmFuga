@@ -2,6 +2,7 @@
 const canvas = document.querySelector(".game-canvas");
 const ctx = canvas.getContext("2d");
 const gameManager = new GameManager();
+const soundEffects = new EfeitosSonoros();
 
 // Aqui no script, ele escuta e envia mensagens ao servidor, comunicando sobre o jogo em si
 
@@ -11,6 +12,11 @@ ws.onopen = () => {
 
     // Escutando acontecimentos do jogo e comunicando ao servidor sobre elas
     document.addEventListener("capturandoPeca", (e) => {
+
+        if (sound) {
+            soundEffects.playCaptureSound();
+        }
+
         addPecaCapturadaScore(e.detail);
         ws.send(JSON.stringify({
             tipo: "pecaCapturada",
@@ -22,6 +28,11 @@ ws.onopen = () => {
     });
 
     document.addEventListener("pecaMovida", (e) => {
+
+        if (sound) {
+            soundEffects.playMovementSound();
+        }
+
         ws.send(JSON.stringify({
             tipo: "pecaMovida",
             antigoX: e.detail.antigoX,

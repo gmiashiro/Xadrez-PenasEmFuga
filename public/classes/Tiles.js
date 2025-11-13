@@ -29,7 +29,6 @@ class Tiles {
         this.jogador = jogador;
         this.peaoToEvoluir;
 
-
         document.addEventListener(("chosenPecaEvolucao"), (e) => {
             this.pecaEvolucao = e.detail.peca;
             console.log(this.peaoToEvoluir)
