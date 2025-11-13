@@ -76,6 +76,7 @@ ws.onmessage = (event) => {
             window.playerId = msg.jogador;
             buildScore(msg.jogador);
             gameManager.startTabuleiro(msg.jogador);
+            openStartWindow();
             gameManager.tabuleiro.atualizarTurno(msg.jogador === msg.turno);
             break;
         case "passouQuantidadeJogadores":
@@ -132,6 +133,47 @@ ws.onmessage = (event) => {
         // --- FIM DOS NOVOS CASOS ---
     }
 };
+
+
+function openStartWindow() {
+    // Cria a aba
+    const startWindow = document.createElement("div");
+    startWindow.id = "start-window";
+    startWindow.classList.add("first");
+    // Cria a camada escura que será colocada atrás da aba
+    const camadaEscura = document.createElement("div");
+    camadaEscura.classList.add("escurecer");
+    camadaEscura.id = "camadaEscura";
+    // Adiciona toda a estrutura de html da aba
+    startWindow.innerHTML = "<h1>Penas no tabuleiro!</h1><span>Um spinoff do grandioso e aclamado 'Penas em fuga!'</span>";
+    // <h1>Penas no tabuleiro!</h1>
+    // <span>Um spinoff do grandioso e aclamado “Penas em fuga!”</span>
+
+    // Coloca os novos elementos no body
+    const body = document.getElementById("body");
+    body.appendChild(camadaEscura);
+    body.appendChild(startWindow);
+
+    setTimeout(() => {
+        startWindow.innerHTML = "<div class='start-window-text'><p>'As regras não mudam, Pingo — o jogo é o mesmo desde os tempos antigos. Cada peça conhece seu caminho. Só resta saber… se você conhece o seu.'</p><p>Juninho Jr.</p></div><div><button onclick='startGame()'>Começar</button></div>";
+        startWindow.classList.remove("first");
+        startWindow.classList.add("last");
+        // <div class='start-window-text'>
+        //     <p>'As regras não mudam, Pingo — o jogo é o mesmo desde os tempos antigos. Cada peça conhece seu caminho. Só resta saber… se você conhece o seu.'</p>
+        //     <p>Juninho Jr.</p>
+        // </div>
+        // <div>
+        //     <button onclick='startGame()'>Começar</button>
+        // </div>
+    }, 3000);
+}
+
+function startGame() {
+    const startWindow = document.getElementById("start-window");
+    const camadaEscura = document.getElementById("camadaEscura");
+    startWindow.remove();
+    camadaEscura.remove();
+}
 
 
 
