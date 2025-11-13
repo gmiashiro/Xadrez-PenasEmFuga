@@ -14,6 +14,16 @@ class Soundtrack {
         this.currentSong = null; // Uma instancia da classe Howl (biblioteca howler) que abriga a música que está tocando no momento
         this.currentSongIndex = -1; // Variável que abriga o index do array soundtrack onde está a música atual (currentSong)
         this.isPlaying = false; // Para saber se está tocando uma música ou não
+
+        document.addEventListener("desligarSong", () => {
+            this.currentSong.stop();
+            this.isPlaying = false;
+        });
+
+        document.addEventListener("ligarSong", () => {
+            this.startSoundtrack();
+        });
+
     }
 
     startSoundtrack() { // Começa a trilha sonora

@@ -146,6 +146,17 @@ wss.on("connection", (ws) => {
                 console.log(`Jogador ${remetenteId} capturou...`);
                 break;
 
+            case "oponenteEvoluiu":
+                // Apenas retransmite (traduzido)
+                if (destinatario) {
+                    let msgCaptura = { ...msgCliente, tipo: "oponenteEvoluiu" };
+                    // --- LOG ---
+                    console.log(`[LOG SERVIDOR] Enviando "oponenteEvoluiu" para Jogador ${destinatario.jogadorId}`);
+                    destinatario.send(JSON.stringify(msgCaptura));
+                }
+                console.log(`Jogador ${remetenteId} evoluiu...`);
+                break;
+
             // Caso: Jogo terminou (Rei capturado)
             case "jogoTerminou":
                 console.log(`Jogo terminou. Vencedor: Jogador ${msgCliente.winnerPlayer}`);

@@ -33,6 +33,14 @@ ws.onopen = () => {
         }))
     });
 
+    document.addEventListener("oponenteEvoluiu", (e) => {
+        ws.send(JSON.stringify({
+            tipo: "oponenteEvoluiu",
+            idPeao: e.detail.idPeao,
+            idNova: e.detail.idNova
+        }))
+    });
+
     document.addEventListener("reiCapturado", (e) => {
         // 1. Mostra a janela de "Game Over"
         openGameOverWindow(e.detail.winnerColor, e.detail.winnerPlayer);
@@ -75,6 +83,12 @@ ws.onmessage = (event) => {
             if (gameManager.tabuleiro) {
                 addPecaCapturadaScore(msg);
                 gameManager.tabuleiro.aplicarCapturaOponente(msg);
+            }
+            break;
+        case "oponenteEvoluiu":
+            // Passa a evolução para o tabuleiro aplicar
+            if (gameManager.tabuleiro) {
+                gameManager.tabuleiro.aplicarEvolucaoOponente(msg);
             }
             break;
         case "atualizarTurno":
@@ -264,14 +278,20 @@ function openConfigWindow() {
     songButton.onclick = () => {
         console.log("ok")
         if (song) {
+            // Se a música estiver ligada e quer desligar
             songButton.classList.remove("song");
             songButton.classList.add("songOff");
             song = false;
+            var desligarSong = new CustomEvent("desligarSong");
+            document.dispatchEvent(desligarSong);
             console.log("3")
         } else {
+            // Se a música estiver desligada e quer ligar
             songButton.classList.remove("songOff");
             songButton.classList.add("song");
             song = true;
+            var ligarSong = new CustomEvent("ligarSong");
+            document.dispatchEvent(ligarSong);
             console.log("4")
         }
     }
@@ -293,16 +313,16 @@ function openEvolucaoPeaoWindow() {
     const camadaEscura = document.createElement("div");
     camadaEscura.classList.add("escurecer");
     // Adiciona toda a estrutura de html da aba
-    evolucaoWindow.innerHTML += "<div class='evolucao-header'><span class='evolucao-title'>Promoção</span><p>Escolha sua peça</p></div><div class='evolucao-button-container'><button class='evolucao-button rainha'></button><button class='evolucao-button torre'></button><button class='evolucao-button cavalo'></button><button class='evolucao-button bispo'></button></div>";
+    evolucaoWindow.innerHTML += "<div class='evolucao-header'><span class='evolucao-title'>Promoção</span><p>Escolha sua peça</p></div><div class='evolucao-button-container'><button class='evolucao-button rainha' onclick='chosenPecaEvolucao(1)'></button><button class='evolucao-button torre' onclick='chosenPecaEvolucao(2)'></button><button class='evolucao-button cavalo' onclick='chosenPecaEvolucao(3)'></button><button class='evolucao-button bispo' onclick='chosenPecaEvolucao(4)'></button></div>";
     // <div class='evolucao-header'>
     //     <span class='evolucao-title'>Promoção</span>
     //     <p>Escolha sua peça</p>
     // </div>
     // <div class='evolucao-button-container'>
-    //     <button class='evolucao-button rainha'></button>
-    //     <button class='evolucao-button torre'></button>
-    //     <button class='evolucao-button cavalo'></button>
-    //     <button class='evolucao-button bispo'></button>
+    //     <button class='evolucao-button rainha' onclick='chosenPecaEvolucao(1)'></button>
+    //     <button class='evolucao-button torre' onclick='chosenPecaEvolucao(2)'></button>
+    //     <button class='evolucao-button cavalo' onclick='chosenPecaEvolucao(3)'></button>
+    //     <button class='evolucao-button bispo' onclick='chosenPecaEvolucao(4)'></button>
     // </div>
 
     // Coloca os novos elementos no body
@@ -320,9 +340,33 @@ function openEvolucaoPeaoWindow() {
                 console.log("ue")
                 evolucaoWindow.remove();
                 camadaEscura.remove();
+                var classe = null;
+
+                if (button.classList.contains("rainha")) {
+                    classe = "Rainha";
+                } else if (button.classList.contains("bispo")) {
+                    classe = "Bispo";
+                } else if (button.classList.contains("torre")) {
+                    classe = "Torre";
+                } else if (button.classList.contains("cavalo")) {
+                    classe = "Cavalo";
+                }
+
+                chosenPecaEvolucao(classe);
             }, 300);
         }
     })
+}
+
+function chosenPecaEvolucao(tipo) {
+    console.log("O QUE");
+    console.log(tipo)
+    var chosenPecaEvolucao = new CustomEvent("chosenPecaEvolucao", {
+        detail: {
+            peca: tipo
+        }
+    });
+    document.dispatchEvent(chosenPecaEvolucao);
 }
 
 function openGameOverWindow(winnerColor, winnerPlayer) {

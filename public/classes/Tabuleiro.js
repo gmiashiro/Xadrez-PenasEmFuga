@@ -68,6 +68,31 @@ class Tabuleiro {
         }
     }
 
+    aplicarEvolucaoOponente(msg) {
+        // msg tem: idPeao, idNova
+        console.log(`Oponente evoluiu peça: ${msg.idPeao}, para ${msg.idNova}`);
+        const peao = this.tiles.findPecaId(msg.idPeao);
+        var tipo = null;
+        
+        if (msg.idNova.includes("Ra")) {
+            tipo = "Rainha";
+        } else if (msg.idNova.includes("B")) {
+            tipo = "Bispo";
+        } else if (msg.idNova.includes("T")) {
+            tipo = "Torre";
+        } else if (msg.idNova.includes("C")) {
+            tipo = "Cavalo";
+        }
+
+        if(peao) {
+            this.tiles.capturePeca(peao); // Usa a função de captura mesmo para tirar a peça do peão
+            this.tiles.evolucaoPeao(tipo, peao, false)
+        } else {
+            console.log("Erro: Não foi possível encontrar o peão que evoluiu");
+        }
+
+    }
+
     atualizarTurno(eMeuTurno) {
         if (this.tiles) {
             this.tiles.meuTurno = eMeuTurno;
