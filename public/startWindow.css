@@ -1,0 +1,69 @@
+#start-window {
+    position: absolute;
+    z-index: 3;
+    width: 566px;
+    height: 304px;
+    background-color: #F4E8D8;
+    border: solid 4px #499452;
+    border-radius: 30px;
+    font-family: "Acme", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.first {
+    gap: 10px;
+}
+
+.last {
+    gap: 48px;
+}
+
+#start-window h1 {
+    color: #0F6819;
+    font-size: 50px;
+    margin: 0;
+}
+
+#start-window span {
+    color: #288733;
+    font-size: 19px;
+    margin: 0;
+}
+
+#start-window p {
+    color: #0F6819;
+    font-size: 20px;
+    margin: 0;
+}
+
+.start-window-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+#start-window button {
+    background-color: #499452;
+    color: #F4E8D8;
+    border: none;
+    font-family: "Acme", sans-serif;
+    font-size: 32px;
+    padding: 9px 38px;
+    border-radius: 15px;
+    transition: 0.1s;
+}
+
+#start-window button:hover {
+    scale: 1.1;
+    cursor: pointer;
+}
+
+#start-window button:active {
+    scale: 0.9;
+    cursor: pointer;
+}
