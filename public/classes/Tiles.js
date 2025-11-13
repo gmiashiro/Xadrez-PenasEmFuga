@@ -27,6 +27,14 @@ class Tiles {
         };
 
         this.jogador = jogador;
+        this.peaoToEvoluir;
+
+
+        document.addEventListener(("chosenPecaEvolucao"), (e) => {
+            this.pecaEvolucao = e.detail.peca;
+            console.log(this.peaoToEvoluir)
+            this.evolucaoPeao(this.pecaEvolucao, this.peaoToEvoluir, true);
+        })
 
     }
 
@@ -163,6 +171,7 @@ class Tiles {
                     if (this.selectedPeca.isPeao) {
                         if ((this.selectedPeca.facing == "front" && tileY == 7) || (this.selectedPeca.facing == "back" && tileY == 0)) {
                             this.selectedPeca.evolucao();
+                            this.peaoToEvoluir = this.selectedPeca;
                         } 
                     }
                     
@@ -215,6 +224,69 @@ class Tiles {
         this.pecas = this.pecas.filter(peca => peca !== pecaToCapture);
     }
 
+
+    evolucaoPeao(pecaNova, peao, emitirEvento) {
+        console.log("VEIO AQUI")
+        console.log(peao)
+        console.log(pecaNova)
+        var player = null;
+        if (peao.id.includes("p1")) {
+            player = "p1";
+        } else {
+            player = "p2";
+        }
+        var color = null;
+        var spriteSheetEnd = null;
+        if (peao.color = "blue") {
+            color = "blue"
+            spriteSheetEnd = "Blue.png";
+        } else {
+            color = "red";
+            spriteSheetEnd = "Red.png";
+        }
+        this.pecas = this.pecas.filter(peca => peca !== peao);
+        var idNova = null
+        switch (pecaNova) {
+            case "Rainha":
+                idNova = "Ra2_" + player;
+                this.pecas.push(new Rainha({tiles: this, directionMoviment: peao.directionMoviment, color: peao.color, facing: peao.facing, gridX: peao.gridX, gridY: peao.gridY, id: idNova, spriteSheet: "./assets/spriteSheets/" + color + "/rainha" + spriteSheetEnd}));
+                console.log("rainha")
+                break;
+            case "Bispo":
+                idNova = "B3_" + player;
+                this.pecas.push(new Bispo({tiles: this, directionMoviment: peao.directionMoviment, color: peao.color, facing: peao.facing, gridX: peao.gridX, gridY: peao.gridY, id: idNova, spriteSheet: "./assets/spriteSheets/" + color + "/bispo" + spriteSheetEnd}));
+                console.log("bispo")
+                break;
+            case "Cavalo":
+                idNova = "C3_" + player;
+                this.pecas.push(new Cavalo({tiles: this, directionMoviment: peao.directionMoviment, color: peao.color, facing: peao.facing, gridX: peao.gridX, gridY: peao.gridY, id: idNova, spriteSheet: "./assets/spriteSheets/" + color + "/cavalo" + spriteSheetEnd, isHorse: true}));
+                console.log("cavalo")
+                break;
+            case "Torre":
+                idNova = "T3_" + player;
+                this.pecas.push(new Torre({tiles: this, directionMoviment: peao.directionMoviment, color: peao.color, facing: peao.facing, gridX: peao.gridX, gridY: peao.gridY, id: idNova, spriteSheet: "./assets/spriteSheets/" + color + "/torre" + spriteSheetEnd}));
+                console.log("torre")
+                break;
+        }
+
+        if (emitirEvento) {
+            this.emitEvolucaoEvento(peao, idNova);
+        }
+
+        
+    }
+
+    emitEvolucaoEvento(peao, idNova) {
+        var oponenteEvoluiu = new CustomEvent("oponenteEvoluiu", {
+            detail: {
+                idPeao: peao.id,
+                idNova: idNova
+            }
+        });
+        document.dispatchEvent(oponenteEvoluiu);
+    }
+
+
     initializeBoardPlayer_1(){
         const path = "./assets/spriteSheets";
         const rivalConfig = { tiles: this, directionMoviment: "down", color: "red", facing: "front" };
@@ -222,12 +294,12 @@ class Tiles {
 
         // Time Vermelho (Traseira - y=0, Peões - y=1)
         this.pecas.push(new Torre({ ...rivalConfig, gridX: 0, gridY: 0, id: "T1_p2", spriteSheet: `${path}/red/torreRed.png` }));
-        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 1, gridY: 0, id: "C1_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 1, gridY: 0, id: "C1_p2", spriteSheet: `${path}/red/cavaloRed.png`, isHorse: true }));
         this.pecas.push(new Bispo({ ...rivalConfig, gridX: 2, gridY: 0, id: "B1_p2", spriteSheet: `${path}/red/bispoRed.png` }));
         this.pecas.push(new Rainha({ ...rivalConfig, gridX: 3, gridY: 0, id: "Ra1_p2", spriteSheet: `${path}/red/rainhaRed.png` }));
         this.pecas.push(new Rei({ ...rivalConfig, gridX: 4, gridY: 0, id: "Re1_p2", spriteSheet: `${path}/red/reiRed.png` }));
         this.pecas.push(new Bispo({ ...rivalConfig, gridX: 5, gridY: 0, id: "B2_p2", spriteSheet: `${path}/red/bispoRed.png` }));
-        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 6, gridY: 0, id: "C2_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 6, gridY: 0, id: "C2_p2", spriteSheet: `${path}/red/cavaloRed.png`, isHorse: true }));
         this.pecas.push(new Torre({ ...rivalConfig, gridX: 7, gridY: 0, id: "T2_p2", spriteSheet: `${path}/red/torreRed.png` }));
 
         for (let i = 0; i < 8; i++) {
@@ -237,12 +309,12 @@ class Tiles {
 
         // Time Azul (Traseira - y=7, Peões - y=6)
         this.pecas.push(new Torre({ ...playerConfig, gridX: 0, gridY: 7, id: "T1_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
-        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 1, gridY: 7, id: "C1_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 1, gridY: 7, id: "C1_p1", spriteSheet: `${path}/blue/cavaloBlue.png`, isHorse: true }));
         this.pecas.push(new Bispo({ ...playerConfig, gridX: 2, gridY: 7, id: "B1_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
         this.pecas.push(new Rainha({ ...playerConfig, gridX: 3, gridY: 7, id: "Ra1_p1", spriteSheet: `${path}/blue/rainhaBlue.png` }));
         this.pecas.push(new Rei({ ...playerConfig, gridX: 4, gridY: 7, id: "Re1_p1", spriteSheet: `${path}/blue/reiBlue.png` }));
         this.pecas.push(new Bispo({ ...playerConfig, gridX: 5, gridY: 7, id: "B2_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
-        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 6, gridY: 7, id: "C2_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 6, gridY: 7, id: "C2_p1", spriteSheet: `${path}/blue/cavaloBlue.png`, isHorse: true }));
         this.pecas.push(new Torre({ ...playerConfig, gridX: 7, gridY: 7, id: "T2_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
 
         for (let i = 0; i < 8; i++) {
@@ -260,12 +332,12 @@ class Tiles {
 
         // Time Azul (Traseira - y=0, Peões - y=1)
         this.pecas.push(new Torre({ ...rivalConfig, gridX: 0, gridY: 0, id: "T2_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
-        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 1, gridY: 0, id: "C2_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 1, gridY: 0, id: "C2_p1", spriteSheet: `${path}/blue/cavaloBlue.png`, isHorse: true }));
         this.pecas.push(new Bispo({ ...rivalConfig, gridX: 2, gridY: 0, id: "B2_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
         this.pecas.push(new Rainha({ ...rivalConfig, gridX: 4, gridY: 0, id: "Ra1_p1", spriteSheet: `${path}/blue/rainhaBlue.png` }));
         this.pecas.push(new Rei({ ...rivalConfig, gridX: 3, gridY: 0, id: "Re1_p1", spriteSheet: `${path}/blue/reiBlue.png` }));
         this.pecas.push(new Bispo({ ...rivalConfig, gridX: 5, gridY: 0, id: "B1_p1", spriteSheet: `${path}/blue/bispoBlue.png` }));
-        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 6, gridY: 0, id: "C1_p1", spriteSheet: `${path}/blue/cavaloBlue.png` }));
+        this.pecas.push(new Cavalo({ ...rivalConfig, gridX: 6, gridY: 0, id: "C1_p1", spriteSheet: `${path}/blue/cavaloBlue.png`, isHorse: true }));
         this.pecas.push(new Torre({ ...rivalConfig, gridX: 7, gridY: 0, id: "T1_p1", spriteSheet: `${path}/blue/torreBlue.png` }));
 
         for (let i = 7; i >= 0; i--) {
@@ -275,12 +347,12 @@ class Tiles {
 
         // Time Vermelho (Traseira - y=7, Peões - y=6)
         this.pecas.push(new Torre({ ...playerConfig, gridX: 0, gridY: 7, id: "T2_p2", spriteSheet: `${path}/red/torreRed.png` }));
-        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 1, gridY: 7, id: "C2_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 1, gridY: 7, id: "C2_p2", spriteSheet: `${path}/red/cavaloRed.png`, isHorse: true }));
         this.pecas.push(new Bispo({ ...playerConfig, gridX: 2, gridY: 7, id: "B2_p2", spriteSheet: `${path}/red/bispoRed.png` }));
         this.pecas.push(new Rainha({ ...playerConfig, gridX: 4, gridY: 7, id: "Ra1_p2", spriteSheet: `${path}/red/rainhaRed.png` }));
         this.pecas.push(new Rei({ ...playerConfig, gridX: 3, gridY: 7, id: "Re1_p2", spriteSheet: `${path}/red/reiRed.png` }));
         this.pecas.push(new Bispo({ ...playerConfig, gridX: 5, gridY: 7, id: "B1_p2", spriteSheet: `${path}/red/bispoRed.png` }));
-        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 6, gridY: 7, id: "C1_p2", spriteSheet: `${path}/red/cavaloRed.png` }));
+        this.pecas.push(new Cavalo({ ...playerConfig, gridX: 6, gridY: 7, id: "C1_p2", spriteSheet: `${path}/red/cavaloRed.png`, isHorse: true }));
         this.pecas.push(new Torre({ ...playerConfig, gridX: 7, gridY: 7, id: "T1_p2", spriteSheet: `${path}/red/torreRed.png` }));
 
         for (let i = 7; i >= 0; i--) {
