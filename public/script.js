@@ -80,7 +80,10 @@ ws.onmessage = (event) => {
             gameManager.startTabuleiro(msg.jogador);
             if (msg.jogador == 1) {
                 openWaitingWindow();
-            }    
+                audioStarter(1);
+            } else {
+                audioStarter(2);
+            }
             openStartWindow();
             gameManager.tabuleiro.atualizarTurno(msg.jogador === msg.turno);
             break;
@@ -281,8 +284,21 @@ function addPecaCapturadaScore(msg) {
 
 
 // A música e o som começam ligadas
-var sound = true;
-var song = true;
+var sound;
+var song;
+
+function audioStarter(player) {
+    switch (player) {
+        case 1:
+            sound = true;
+            song = true;
+            break;
+        case 2:
+            sound = false;
+            song = false;
+            break;
+    }
+}
 
 function openConfigWindow() {
     // Cria a aba
