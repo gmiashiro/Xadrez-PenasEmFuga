@@ -1,5 +1,5 @@
 # Penas no tabuleiro!
-###Como rodar o jogo localmente:
+### Como rodar o jogo localmente:
 
 Primeiramente, realizar o download do projeto e extrair o arquivo .zip
 em uma pasta da sua preferência.
