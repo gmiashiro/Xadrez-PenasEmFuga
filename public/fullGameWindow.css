@@ -1,0 +1,26 @@
+#fullGame-window {
+    position: absolute;
+    z-index: 3;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    background-color: #F4E8D8;
+    border: solid 4px #499452;
+    font-family: "Acme", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 75px;
+}
+
+#fullGame-window h1 {
+    color: #0F6819;
+    font-size: 70px;
+    margin: 0;
+}
+
+#fullGame-window p {
+    color: #0F6819;
+    font-size: 25px;
+    padding: 0px 100px;
+}

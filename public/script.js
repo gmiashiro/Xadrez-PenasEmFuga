@@ -80,7 +80,7 @@ ws.onmessage = (event) => {
             gameManager.tabuleiro.atualizarTurno(msg.jogador === msg.turno);
             break;
         case "passouQuantidadeJogadores":
-            alert("O jogo já está cheio. Tente mais tarde.");
+            showFullGameWindow();
             break;
 
         // --- NOVOS CASOS ---
@@ -110,7 +110,7 @@ ws.onmessage = (event) => {
             }
             break;
         case "oponenteDesconectou":
-            alert("Seu oponente desconectou. Atualize a página para encontrar um novo jogo.");
+            showGamerLeftWindow();
             // (Aqui você pode adicionar uma lógica para resetar o jogo)
             break;
         // O servidor está nos dizendo que o oponente venceu
@@ -476,4 +476,49 @@ function openGameOverWindow(winnerColor, winnerPlayer) {
     const body = document.getElementById("body");
     body.appendChild(camadaEscura);
     body.appendChild(gameOverWindow);
+}
+
+function showFullGameWindow() {
+    // Cria a aba
+    const fullGameWindow = document.createElement("div");
+    fullGameWindow.id = "fullGame-window";
+    // Adiciona toda a estrutura de html da aba
+    fullGameWindow.innerHTML = "<h1>Sala cheia</h1><p>'Olha só, um terceiro jogador tentando invadir a cena. Eu entendo: gráficos bonitos, música boa, vontade de participar… mas as regras aqui são rígidas. O código literalmente não sabe o que fazer com você. Se eu tentasse te pôr no tabuleiro, o jogo provavelmente explodiria'</p>";
+   
+    // <h1>Sala cheia</h1>
+    // <p>'Olha só, um terceiro jogador tentando invadir a cena. Eu entendo: gráficos bonitos, 
+    //     música boa, vontade de participar… mas as regras aqui são rígidas. O código 
+    //     literalmente não sabe o que fazer com você. Se eu tentasse te pôr no tabuleiro, 
+    //     o jogo provavelmente explodiria'</p>
+
+    // Coloca o novo elementos no body
+    const body = document.getElementById("body");
+    body.appendChild(fullGameWindow);
+}
+
+function showGamerLeftWindow() {
+
+    const frases = [
+        "<p>'Parece que alguém fugiu do galinheiro… de novo. O jogo, por segurança do galinheiro, não irá prosseguir.'</p>",
+        "<p>'O jogo detectou que o rival desconectou. Como resposta madura, ele decidiu que não dá para continuar assim.'</p>",
+        "<p>'Um dos jogadores evaporou e o jogo não sabe lidar com isso. Vamos ter que parar antes que tudo pegue fogo. Chame a pessoa de volta e tente de novo!'</p>",
+        "<p>'Parabéns! Você descobriu o cenário em que os desenvolvedores esqueceram: 'E se tiver só um player?'. A resposta atual do código é: 'AAAAAAAA'. Vamos parar.'</p>",
+        "<p>'O jogo tentou continuar com um player só… e travou. Não tecnicamente — emocionalmente. Ele não estava preparado pra esse abandono. Reinicie antes que ele escreva poesia em binário.'</p>"
+    ]
+
+    // Cria a aba
+    const gamerLeftWindow = document.createElement("div");
+    gamerLeftWindow.id = "gamerLeft-window";
+    // Adiciona toda a estrutura de html da aba
+    gamerLeftWindow.innerHTML = "<h1>Rival desconectou</h1>";
+    gamerLeftWindow.innerHTML += frases[Math.floor(Math.random() * frases.length) + 0];
+    // <h1>Sala cheia</h1>
+    // <p>'Parece que alguém fugiu do galinheiro… de novo. O jogo, por segurança do galinheiro, não irá prosseguir.'</p>
+    
+    const camadaEscura = document.createElement("div");
+    camadaEscura.classList.add("escurecer");
+    // Coloca o novo elementos no body
+    const body = document.getElementById("body");
+    body.appendChild(camadaEscura);
+    body.appendChild(gamerLeftWindow);
 }
