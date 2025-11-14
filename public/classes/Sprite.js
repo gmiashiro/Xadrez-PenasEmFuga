@@ -9,7 +9,7 @@ class Sprite {
         this.isHorse = config.isHorse || false;
         console.log(this.spriteSheet.src, this.isHorse);
         if (this.isHorse) {
-            this.animations = { // É o mesmo para quase todas as sprites, menos o Efeito e o Cavalo
+            this.animations = { // É o mesmo para quase todas as sprites, menos o Cavalo
                 "idle-right" : [ [0,3] ],
                 "idle-up"    : [ [0,1] ],
                 "idle-down"  : [ [0,2] ],
@@ -20,7 +20,7 @@ class Sprite {
                 "walk-left"  : [ [0,0],[1,0],[2,0],[3,0],[4,0],[5,0][5,0] ]
             }
         } else {
-            this.animations = { // É o mesmo para quase todas as sprites, menos o Efeito e o Cavalo
+            this.animations = {
                 "idle-right" : [ [1,3] ],
                 "idle-up"    : [ [1,1] ],
                 "idle-down"  : [ [1,2] ],
@@ -42,9 +42,3 @@ class Sprite {
     }
 
 }
-
-
-// var pingo = new Sprite({
-//     spriteSheet: "./public/assets/spriteSheets/blue/kingBlue.png",
-//     directionMoviment: "up"
-// });
