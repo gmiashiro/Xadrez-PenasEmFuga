@@ -7,8 +7,6 @@ class Soundtrack {
             {name: "sound4", src: "./assets/audio/songs/musicaFundo4.ogg"},
             {name: "sound5", src: "./assets/audio/songs/musicaFundo5.ogg"},
             {name: "sound6", src: "./assets/audio/songs/musicaFundo6.ogg"},
-            // A do cavalo está aqui temporariamente
-            {name: "sound7", src: "./assets/audio/songs/musicaCavalo.ogg"},
             
         ]
         this.currentSong = null; // Uma instancia da classe Howl (biblioteca howler) que abriga a música que está tocando no momento

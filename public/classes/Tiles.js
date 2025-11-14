@@ -228,6 +228,7 @@ class Tiles {
         console.log("VEIO AQUI")
         console.log(peao)
         console.log(pecaNova)
+        console.log(peao.color);
         var player = null;
         if (peao.id.includes("p1")) {
             player = "p1";
@@ -236,7 +237,7 @@ class Tiles {
         }
         var color = null;
         var spriteSheetEnd = null;
-        if (peao.color = "blue") {
+        if (peao.color == "blue") {
             color = "blue"
             spriteSheetEnd = "Blue.png";
         } else {
