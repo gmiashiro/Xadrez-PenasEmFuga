@@ -84,6 +84,9 @@ wss.on("connection", (ws) => {
             jogador: 2,
             turno: turnoAtual
         }));
+        jogador1.send(JSON.stringify({
+            tipo: "closeWaitingWindow",
+        }))
     } else {
         // Jogo cheio
         console.log("Conexão recusada. Jogo cheio.");

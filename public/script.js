@@ -3,6 +3,7 @@ const canvas = document.querySelector(".game-canvas");
 const ctx = canvas.getContext("2d");
 const gameManager = new GameManager();
 const soundEffects = new EfeitosSonoros();
+var jogadorId;
 
 // Aqui no script, ele escuta e envia mensagens ao servidor, comunicando sobre o jogo em si
 
@@ -74,10 +75,17 @@ ws.onmessage = (event) => {
         case "novoJogador":
             // Inicia o tabuleiro quando o servidor atribui um ID de jogador
             window.playerId = msg.jogador;
+            jogadorId = msg.jogador;
             buildScore(msg.jogador);
             gameManager.startTabuleiro(msg.jogador);
+            if (msg.jogador == 1) {
+                openWaitingWindow();
+            }    
             openStartWindow();
             gameManager.tabuleiro.atualizarTurno(msg.jogador === msg.turno);
+            break;
+        case "closeWaitingWindow":
+            closeWaitingWindow();
             break;
         case "passouQuantidadeJogadores":
             showFullGameWindow();
@@ -521,4 +529,30 @@ function showGamerLeftWindow() {
     const body = document.getElementById("body");
     body.appendChild(camadaEscura);
     body.appendChild(gamerLeftWindow);
+}
+
+function openWaitingWindow() {
+    const waitingWindow = document.createElement("div");
+    waitingWindow.id = "waiting-window";
+    // Adiciona toda a estrutura de html da aba
+    waitingWindow.innerHTML = "<h1>Aguardando player 2</h1>";
+    
+    const camadaEscura = document.createElement("div");
+    camadaEscura.classList.add("escurecer");
+    // Coloca o novo elementos no body
+    const body = document.getElementById("body");
+    body.appendChild(camadaEscura);
+    body.appendChild(waitingWindow);
+}
+
+function closeWaitingWindow() {
+    const waitingWindow = document.getElementById("waiting-window");
+    const camadaEscura = document.querySelector(".escurecer");
+
+    if (!waitingWindow || !camadaEscura) {
+        return;
+    }
+    
+    camadaEscura.remove();
+    waitingWindow.remove();
 }
